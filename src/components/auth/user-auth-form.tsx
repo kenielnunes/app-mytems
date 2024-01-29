@@ -7,6 +7,8 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Icons } from "../icons";
+import { useSession } from "next-auth/react";
+import { SignInButton } from "./sign-in-button";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -53,9 +55,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+          <span className="bg-black px-2">Or continue with</span>
         </div>
       </div>
       <Button variant="outline" type="button" disabled={isLoading}>
@@ -66,6 +66,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         )}{" "}
         GitHub
       </Button>
+      <SignInButton />
     </div>
   );
 }
