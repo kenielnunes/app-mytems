@@ -100,12 +100,12 @@ export function Navbar() {
         </NavigationMenuList> */}
       </NavigationMenu>
 
-      {data?.user ? (
+      {data?.user?.image ? (
         <Menubar className="border-none">
           <MenubarMenu>
             <MenubarTrigger>
               <Avatar>
-                <AvatarImage src={data.user.image || ""} alt="avatar" />
+                <AvatarImage src={data.user.image} alt="avatar" />
                 <AvatarFallback>CN</AvatarFallback>
               </Avatar>
               <ChevronDownIcon className="ml-2" />
