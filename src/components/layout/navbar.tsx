@@ -74,9 +74,8 @@ export function Navbar() {
 
   const { push } = useRouter();
 
-  console.log(data);
   return (
-    <div className="w-screen flex justify-between p-3 items-center px-6">
+    <div className="max-w-screen flex justify-between p-3 items-center px-6">
       <NavigationMenu>
         <div>
           <h1>Logo</h1>

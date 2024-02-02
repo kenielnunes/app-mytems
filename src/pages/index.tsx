@@ -8,7 +8,7 @@ import HomeLayout from "@/components/layout/home-layout";
 export default function Home() {
   return (
     <HomeLayout>
-      <section className="space-y-6  pb-12 pt-16 lg:py-28">
+      <section className="space-y-6 pb-12 pt-16 lg:py-28">
         <div className="container flex max-w-[64rem] flex-col items-center gap-5 text-center">
           <Link
             href="https://twitter.com/miickasmt/status/1719892161095745801"

@@ -8,6 +8,7 @@ import { Navbar } from "@/components/layout/navbar";
 import { NavbarLayout } from "@/components/layout/navbar-layout";
 import { PlaceOrder } from "@/components/form/place-order";
 import { Separator } from "@/components/ui/separator";
+import { RootLayout } from "@/components/layout/root-layout";
 
 export default function App({
   Component,
@@ -25,7 +26,9 @@ export default function App({
           <Navbar />
         </NavbarLayout>
         <Separator />
-        <Component {...pageProps} />
+        <RootLayout>
+          <Component {...pageProps} />
+        </RootLayout>
         <PlaceOrder />
       </ThemeProvider>
     </SessionProvider>
