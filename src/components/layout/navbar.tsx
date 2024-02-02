@@ -23,6 +23,13 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import { LogIn, LogOut } from "lucide-react";
 import { useRouter } from "next/router";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+} from "../ui/dialog";
 
 const components: { title: string; href: string; description: string }[] = [
   {
@@ -99,6 +106,15 @@ export function Navbar() {
           </NavigationMenuItem>
         </NavigationMenuList> */}
       </NavigationMenu>
+      {/* <Dialog>
+        <DialogHeader>Teste</DialogHeader>
+        <DialogContent>Conteudo</DialogContent>
+        <DialogFooter>
+          <DialogClose>
+            <Button>Fechar</Button>
+          </DialogClose>
+        </DialogFooter>
+      </Dialog> */}
 
       {data?.user?.image ? (
         <Menubar className="border-none">
@@ -106,7 +122,9 @@ export function Navbar() {
             <MenubarTrigger>
               <Avatar>
                 <AvatarImage src={data.user.image} alt="avatar" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarFallback>
+                  {data?.user?.name?.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <ChevronDownIcon className="ml-2" />
             </MenubarTrigger>
