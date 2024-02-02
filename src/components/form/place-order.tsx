@@ -8,7 +8,7 @@ export function PlaceOrder() {
 
   if (data?.user) {
     return (
-      <Button className="absolute bottom-4 right-4">
+      <Button className="absolute  bottom-4 right-4">
         <Plus className="h-4 w-4" />
       </Button>
     );

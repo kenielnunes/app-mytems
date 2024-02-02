@@ -1,5 +1,5 @@
 import { randomBytes, randomUUID } from "crypto";
-import NextAuth, { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions = {
