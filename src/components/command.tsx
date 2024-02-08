@@ -1,5 +1,4 @@
 import {
-  Command,
   CommandDialog,
   CommandEmpty,
   CommandGroup,
@@ -10,7 +9,7 @@ import {
 import { useEffect, useState } from "react";
 
 export function CommandMenu() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const down = (e: KeyboardEvent) => {
@@ -27,7 +26,6 @@ export function CommandMenu() {
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput placeholder="Type a command or search..." />
       <CommandList>
-        {}
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Suggestions">
           <CommandItem>Calendar</CommandItem>

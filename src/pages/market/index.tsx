@@ -1,10 +1,11 @@
 import { CommandMenu } from "@/components/command";
-import React from "react";
+import { Dropzone } from "@/components/form/shared/dropzone";
+import React, { useState } from "react";
 
 export default function Market() {
   return (
-    <h1>
+    <>
       <CommandMenu />
-    </h1>
+    </>
   );
 }

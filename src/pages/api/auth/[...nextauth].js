@@ -1,6 +1,7 @@
 import { randomBytes, randomUUID } from "crypto";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import SteamProvider from "next-auth-steam";
 
 export const authOptions = {
   // Configure one or more authentication providers

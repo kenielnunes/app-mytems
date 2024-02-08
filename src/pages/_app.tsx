@@ -9,6 +9,7 @@ import { NavbarLayout } from "@/components/layout/navbar-layout";
 import { PlaceOrder } from "@/components/form/place-order";
 import { Separator } from "@/components/ui/separator";
 import { RootLayout } from "@/components/layout/root-layout";
+import { Toaster } from "@/components/ui/sonner";
 
 export default function App({
   Component,
@@ -28,6 +29,7 @@ export default function App({
         <Separator />
         <RootLayout>
           <Component {...pageProps} />
+          <Toaster />
         </RootLayout>
         <PlaceOrder />
       </ThemeProvider>
