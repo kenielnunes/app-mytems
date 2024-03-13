@@ -5,12 +5,18 @@ import { NextApiRequest, NextApiResponse } from "next";
 import NextAuth from "next-auth";
 import SteamProvider, { PROVIDER_ID } from "next-auth-steam";
 
+const DEV_CALLBACK_URL = "http://localhost:3001/api/auth/callback";
+const PROD_CALLBACK_URL = "https://app-mytems.vercel.app/api/auth/callback";
+
+const ENVRONMENT_CALLBACK_URL =
+  process.env.NODE_ENV === "production" ? PROD_CALLBACK_URL : DEV_CALLBACK_URL;
+
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return NextAuth(req, res, {
     providers: [
       SteamProvider(req, {
         clientSecret: process.env.NEXT_PUBLIC_STEAM_SECRET!,
-        callbackUrl: "https://app-mytems.vercel.app/api/auth/callback",
+        callbackUrl: ENVRONMENT_CALLBACK_URL,
       }),
     ],
     session: {
