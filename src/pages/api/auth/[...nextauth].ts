@@ -10,7 +10,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     providers: [
       SteamProvider(req, {
         clientSecret: process.env.NEXT_PUBLIC_STEAM_SECRET!,
-        callbackUrl: "http://localhost:3001/api/auth/callback",
+        callbackUrl: "https://app-mytems.vercel.app/api/auth/callback",
       }),
     ],
     session: {
