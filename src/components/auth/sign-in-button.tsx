@@ -19,7 +19,7 @@ export function SignInButton() {
     <Button
       onClick={() => {
         setIsLoading(true);
-        signIn("google", {
+        signIn("steam", {
           callbackUrl: "/market",
         });
       }}

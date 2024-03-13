@@ -1,8 +1,7 @@
 import { useSession } from "next-auth/react";
 import React, { useState } from "react";
-import { Button } from "../ui/button";
+import { Button } from "../../ui/button";
 import { Plus } from "lucide-react";
-import { CopyIcon } from "@radix-ui/react-icons";
 import {
   Dialog,
   DialogClose,
@@ -13,13 +12,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Dropzone } from "./shared/dropzone";
+import { SetOrderName } from "./set-order-name";
+import { SetOrderGame } from "./set-order-game";
+
+type PlaceOrderSteps =
+  | "set-game"
+  | "set-order-name"
+  | "set-order-images"
+  | "set-order-date"
+  | "set-order-price";
 
 export function PlaceOrder() {
   const { data } = useSession();
-  const [files, setFiles] = useState<string[]>([]);
+
+  const [step, setStep] = useState<PlaceOrderSteps>("set-game");
+
+  const stepComponents: Record<PlaceOrderSteps, JSX.Element> = {
+    "set-game": <SetOrderGame />,
+    "set-order-date": <></>,
+    "set-order-images": <></>,
+    "set-order-name": <></>,
+    "set-order-price": <></>,
+  };
 
   if (data?.user) {
     return (
@@ -37,28 +51,7 @@ export function PlaceOrder() {
                 Place your order to sell any item
               </DialogDescription>
             </DialogHeader>
-            <div className="flex items-center space-x-2">
-              <div className="grid flex-1 gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input id="name" placeholder="Name" />
-              </div>
-            </div>
-            <div className="grid flex-1 gap-2">
-              <Label htmlFor="picture">Banner Picture</Label>
-              <Dropzone
-                onChange={setFiles}
-                className="w-full"
-                fileExtension="png"
-              />
-            </div>
-            <div className="grid flex-1 gap-2">
-              <Label htmlFor="picture">More Pictures</Label>
-              <Dropzone
-                onChange={setFiles}
-                className="w-full"
-                fileExtension="png"
-              />
-            </div>
+            {stepComponents[step]}
             <DialogFooter className="sm:justify-start">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
