@@ -1,10 +1,7 @@
-"use client";
-
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,32 +26,30 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useEffect, useState } from "react";
-import { apiBaseUrl } from "next-auth/client/_utils";
+import { useDebounce } from "@/components/hooks/use-debounce";
+import { useQuery } from "@tanstack/react-query";
+import { findGames } from "@/services/api/modules/game/find-games";
+import { CommandLoading } from "cmdk";
 
 export function SetOrderGame() {
   const [open, setOpen] = useState(false);
-  const [games, setGames] = useState<Game[]>([]);
   const [search, setSearch] = useState<string>("");
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["games"],
+    queryFn: async () => {
+      const filteredGames = await findGames({ name: search });
+
+      return filteredGames;
+    },
+    gcTime: 50000,
+  });
 
   const setOrderGameSchema = z.object({
     slug: z.string({
       required_error: "Please select a language.",
     }),
   });
-
-  useEffect(() => {
-    const dale = async () => {
-      const xesq = await fetch(`http://localhost:3000/game?name=${search}`);
-
-      const toma = await xesq.json();
-
-      setGames(toma.content);
-
-      console.log(toma);
-    };
-
-    dale();
-  }, [search]);
 
   type SetOrderGameType = z.infer<typeof setOrderGameSchema>;
 
@@ -64,18 +59,6 @@ export function SetOrderGame() {
   });
 
   async function onSubmit(data: SetOrderGameType) {
-    const dale = async () => {
-      const xesq = await fetch(`http://localhost:3000/game?name=${data.slug}`);
-
-      const toma = await xesq.json();
-
-      setGames(toma.content);
-
-      console.log(toma);
-    };
-
-    dale();
-
     console.log(data);
   }
 
@@ -101,7 +84,7 @@ export function SetOrderGame() {
                       )}
                     >
                       {field.value
-                        ? games.find((game) => game.slug === field.value)?.name
+                        ? data?.find((game) => game.slug === field.value)?.name
                         : "Select Game"}
                       <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
@@ -115,8 +98,10 @@ export function SetOrderGame() {
                       className="h-9"
                     />
                     <CommandEmpty>No framework found.</CommandEmpty>
+                    {isLoading && <CommandLoading>Buscando...</CommandLoading>}
+
                     <CommandGroup>
-                      {games.map((game) => (
+                      {data?.map((game) => (
                         <CommandItem
                           value={game.name}
                           key={game.id}

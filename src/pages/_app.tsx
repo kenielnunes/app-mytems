@@ -10,29 +10,34 @@ import { PlaceOrder } from "@/components/form/place-order";
 import { Separator } from "@/components/ui/separator";
 import { RootLayout } from "@/components/layout/root-layout";
 import { Toaster } from "@/components/ui/sonner";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
-    <SessionProvider session={session}>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="system"
-        enableSystem
-        disableTransitionOnChange
-      >
-        <NavbarLayout>
-          <Navbar />
-        </NavbarLayout>
-        <Separator />
-        <RootLayout>
-          <Component {...pageProps} />
-          <Toaster />
-        </RootLayout>
-        <PlaceOrder />
-      </ThemeProvider>
-    </SessionProvider>
+    <QueryClientProvider client={queryClient}>
+      <SessionProvider session={session}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NavbarLayout>
+            <Navbar />
+          </NavbarLayout>
+          <Separator />
+          <RootLayout>
+            <Component {...pageProps} />
+            <Toaster />
+          </RootLayout>
+          <PlaceOrder />
+        </ThemeProvider>
+      </SessionProvider>
+    </QueryClientProvider>
   );
 }
