@@ -22,6 +22,8 @@ import { useRouter } from "next/router";
 export function Navbar() {
   const { data } = useSession();
 
+  console.log(data?.user);
+
   const { push } = useRouter();
 
   return (

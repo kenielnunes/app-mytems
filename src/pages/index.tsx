@@ -4,6 +4,11 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Icons } from "@/components/icons";
 import HomeLayout from "@/components/layout/home-layout";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home | MyTems",
+};
 
 export default function Home() {
   return (

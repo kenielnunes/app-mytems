@@ -6,6 +6,7 @@ type FindGamesQueryParams = {
 };
 
 type Game = {
+  id: number;
   name: string;
   slug: string;
   released: string;

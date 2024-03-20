@@ -25,8 +25,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useEffect, useState } from "react";
-import { useDebounce } from "@/components/hooks/use-debounce";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { findGames } from "@/services/api/modules/game/find-games";
 import { CommandLoading } from "cmdk";

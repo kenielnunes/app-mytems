@@ -1,17 +1,19 @@
 // pages/api/auth/[...nextauth].ts
+import { createUser } from "@/services/api/modules/user/create-user";
 import { randomBytes, randomUUID } from "crypto";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import NextAuth from "next-auth";
 import SteamProvider, { PROVIDER_ID } from "next-auth-steam";
 
-const DEV_CALLBACK_URL = "http://localhost:3001/api/auth/callback";
+const DEV_CALLBACK_URL = "http://localhost:3000/api/auth/callback";
 const PROD_CALLBACK_URL = "https://app-mytems.vercel.app/api/auth/callback";
 
 const ENVRONMENT_CALLBACK_URL =
   process.env.NODE_ENV === "production" ? PROD_CALLBACK_URL : DEV_CALLBACK_URL;
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
+  // @ts-expect-error
   return NextAuth(req, res, {
     providers: [
       SteamProvider(req, {
@@ -31,6 +33,30 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         }
 
         return token;
+      },
+      async signIn({ user, account, profile }) {
+        try {
+          const profileSteam = profile as any;
+
+          console.log(profileSteam);
+
+          // Insert the user data into the database
+          if (account?.provider === "steam") {
+            const createdUser = await createUser({
+              originProfileUrl: profileSteam?.profileurl ?? "",
+              origin: "STEAM",
+              email: user.email ?? "",
+              name: user.name ?? "",
+              profileImageUrl: profileSteam?.avatar ?? "",
+            });
+
+            console.log(createdUser);
+
+            return true; // Return true to allow sign in
+          }
+        } catch (error: any) {
+          return true; // Return false to prevent sign in
+        }
       },
       session({ session, token }) {
         if ("steam" in token) {
