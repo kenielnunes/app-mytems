@@ -1,4 +1,5 @@
 // pages/api/auth/[...nextauth].ts
+import { userAuth } from "@/services/api/modules/auth/user-auth";
 import { createUser } from "@/services/api/modules/user/create-user";
 import { randomBytes, randomUUID } from "crypto";
 import { NextApiRequest, NextApiResponse } from "next";
@@ -35,12 +36,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return token;
       },
       async signIn({ user, account, profile }) {
+        const profileSteam = profile as any;
         try {
-          const profileSteam = profile as any;
-
           console.log(profileSteam);
 
-          // Insert the user data into the database
+          const auth = await userAuth(user.email ?? "");
+
+          console.log(auth);
+
+          if (auth.acessToken) {
+            return true;
+          }
+        } catch (error: any) {
           if (account?.provider === "steam") {
             const createdUser = await createUser({
               originProfileUrl: profileSteam?.profileurl ?? "",
@@ -54,8 +61,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 
             return true; // Return true to allow sign in
           }
-        } catch (error: any) {
-          return true; // Return false to prevent sign in
         }
       },
       session({ session, token }) {
