@@ -9,32 +9,74 @@ import { Button } from "../ui/button";
 import { Icons } from "../icons";
 import { useSession } from "next-auth/react";
 import { SignInButton } from "./sign-in-button";
+import { z } from "zod";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createUser } from "@/services/api/modules/user/create-user";
+import { FormMessage } from "../ui/form";
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-  async function onSubmit(event: React.SyntheticEvent) {
-    event.preventDefault();
+  const userAuthSchema = z.object({
+    name: z.string().nonempty("Campo obrigatório"),
+    email: z.string().nonempty("Campo obrigatório"),
+  });
+
+  type UserAuth = z.infer<typeof userAuthSchema>;
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<UserAuth>({
+    resolver: zodResolver(userAuthSchema),
+  });
+
+  async function onSubmit(data: UserAuth) {
     setIsLoading(true);
 
-    setTimeout(() => {
+    try {
+      const created = await createUser({
+        ...data,
+        origin: "PERSONAL_MAIL",
+      });
+
+      console.log(created);
+
       setIsLoading(false);
-    }, 3000);
+
+      return created;
+    } catch (error) {
+      alert(error.response.data.message);
+      setIsLoading(false);
+    }
   }
 
   return (
     <div className={cn("grid gap-6", className)} {...props}>
-      <form onSubmit={onSubmit}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <div className="grid gap-2">
           <div className="grid gap-1">
+            <Label className="sr-only" htmlFor="name">
+              Email
+            </Label>
+            <Input
+              {...register("name")}
+              id="name"
+              placeholder="Name"
+              autoComplete="name"
+              disabled={isLoading}
+            />
             <Label className="sr-only" htmlFor="email">
               Email
             </Label>
             <Input
+              {...register("email")}
               id="email"
-              placeholder="name@example.com"
+              placeholder="email@example.com"
               type="email"
               autoCapitalize="none"
               autoComplete="email"

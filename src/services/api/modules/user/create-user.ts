@@ -1,6 +1,12 @@
 import { api } from "../../api";
 
-export const createUser = async (userData: User): Promise<User> => {
+type CreateUser = {
+  name: string;
+  email: string;
+  origin: UserOrigin;
+};
+
+export const createUser = async (userData: CreateUser): Promise<User> => {
   const { data } = await api.post("/users", userData);
 
   return data.content;

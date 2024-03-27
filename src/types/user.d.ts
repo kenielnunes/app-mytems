@@ -8,3 +8,5 @@ type User = {
   createdAt?: Date;
   updatedAt?: Date;
 };
+
+type UserOrigin = "STEAM" | "GOOGLE" | "PERSONAL_MAIL";
