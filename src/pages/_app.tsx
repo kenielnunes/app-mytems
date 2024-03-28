@@ -9,7 +9,7 @@ import { NavbarLayout } from "@/components/layout/navbar-layout";
 import { PlaceOrder } from "@/components/form/place-order";
 import { Separator } from "@/components/ui/separator";
 import { RootLayout } from "@/components/layout/root-layout";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
