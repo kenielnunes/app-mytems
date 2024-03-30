@@ -1,11 +1,11 @@
 // pages/api/auth/[...nextauth].ts
-import { userAuth } from "@/services/api/modules/auth/user-auth";
+import { userAuth } from "@/services/api/modules/auth/send-auth-magic-link";
 import { createUser } from "@/services/api/modules/user/create-user";
 import { randomBytes, randomUUID } from "crypto";
 import { NextApiRequest, NextApiResponse } from "next";
 
 import NextAuth from "next-auth";
-import SteamProvider, { PROVIDER_ID } from "next-auth-steam";
+import SteamProvider from "next-auth-steam";
 
 const DEV_CALLBACK_URL = "http://localhost:3000/api/auth/callback";
 const PROD_CALLBACK_URL = "https://app-mytems.vercel.app/api/auth/callback";
@@ -28,12 +28,8 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       },
     },
     callbacks: {
-      jwt({ token, account, profile }) {
-        if (account?.provider === PROVIDER_ID) {
-          token.steam = profile;
-        }
-
-        return token;
+      jwt({ token, user }) {
+        return { ...token, ...user };
       },
       async signIn({ user, account, profile }) {
         const profileSteam = profile as any;
@@ -63,13 +59,18 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           }
         }
       },
+
       session({ session, token }) {
         if ("steam" in token) {
           // @ts-expect-error
           session.user.steam = token.steam;
+
+          return session;
         }
 
-        return session;
+        if (session.user) {
+          return session;
+        }
       },
     },
     secret: "81375eb56b0b263990f0ea1233a57796",

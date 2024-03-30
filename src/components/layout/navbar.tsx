@@ -13,16 +13,15 @@ import {
   NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { useSession, signOut } from "next-auth/react";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Button } from "../ui/button";
 import { LogIn, LogOut } from "lucide-react";
 import { useRouter } from "next/router";
+import { useSession } from "@/contexts/user-context";
+import { destroyCookie } from "nookies";
 
 export function Navbar() {
-  const { data } = useSession();
-
-  console.log(data?.user);
+  const { user } = useSession();
 
   const { push } = useRouter();
 
@@ -67,20 +66,26 @@ export function Navbar() {
         </DialogFooter>
       </Dialog> */}
 
-      {data?.user?.image ? (
+      {user ? (
         <Menubar className="border-none">
           <MenubarMenu>
             <MenubarTrigger>
               <Avatar>
-                <AvatarImage src={data.user.image} alt="avatar" />
+                <AvatarImage src={user?.profileImageUrl} alt="avatar" />
                 <AvatarFallback>
-                  {data?.user?.name?.slice(0, 2).toUpperCase()}
+                  {user?.name?.slice(0, 2).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
               <ChevronDownIcon className="ml-2" />
             </MenubarTrigger>
             <MenubarContent>
-              <MenubarItem onClick={() => signOut()} className="cursor-pointer">
+              <MenubarItem
+                onClick={() => {
+                  destroyCookie(undefined, "auth");
+                  push("/auth");
+                }}
+                className="cursor-pointer"
+              >
                 <LogOut className="h-4 w-4 mr-2" />
                 Sign Out
               </MenubarItem>

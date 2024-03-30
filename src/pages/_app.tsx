@@ -3,7 +3,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "@/styles/globals.css";
 
 import type { AppProps } from "next/app";
-import { SessionProvider } from "next-auth/react";
 import { Navbar } from "@/components/layout/navbar";
 import { NavbarLayout } from "@/components/layout/navbar-layout";
 import { PlaceOrder } from "@/components/form/place-order";
@@ -11,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { RootLayout } from "@/components/layout/root-layout";
 import { Toaster } from "@/components/ui/toaster";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { SessionProvider } from "@/contexts/user-context";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +20,7 @@ export default function App({
 }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <SessionProvider session={session}>
+      <SessionProvider>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

@@ -5,7 +5,7 @@ export const userAuth = async (mail: string) => {
     mail: mail,
   });
 
-  const { data } = await api.post(`/auth?${urlParams}`);
+  const { data } = await api.post(`/auth/send-magic-link?${urlParams}`);
 
   return data;
 };
