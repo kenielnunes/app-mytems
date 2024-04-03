@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { SetOrderGame } from "./set-order-game";
-import { useSession } from "@/contexts/user-context";
+import { useSession } from "@/contexts/use-session";
 
 type PlaceOrderSteps =
   | "set-game"

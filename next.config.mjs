@@ -6,6 +6,9 @@ const nextConfig = {
       process.env.NEXT_PUBLIC_GOOGLE_CLIENT_SECRET,
     NEXT_PUBLIC_STEAM_SECRET: process.env.NEXT_PUBLIC_STEAM_SECRET,
   },
+  images: {
+    domains: ["randomuser.me"],
+  },
 };
 
 export default nextConfig;

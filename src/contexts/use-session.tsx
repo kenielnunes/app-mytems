@@ -1,11 +1,12 @@
 import { authUserByMagicLink } from "@/services/api/modules/auth/auth-user-by-magic-link";
+import { findUserByCredential } from "@/services/api/modules/user/find-user-by-credential";
 import { useRouter } from "next/router";
-import { setCookie } from "nookies";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 import React, { createContext, ReactNode, useContext, useState } from "react";
 
 // Definindo o tipo para o contexto do usuário
 interface UserContextType {
-  user: User | null;
+  user: User | undefined;
   login: (userData: User) => void;
   logout: () => void;
 }
@@ -24,14 +25,17 @@ export const useSession = () => {
 
 // Componente provedor do contexto do usuário
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User>();
+
   const { query, replace, pathname } = useRouter();
 
   React.useEffect(() => {
     async function authByMagicLink() {
       if (query.magicAuthToken) {
         try {
-          const auth = await authUserByMagicLink(query.magicAuthToken as any);
+          const auth = await authUserByMagicLink(
+            query.magicAuthToken as string
+          );
 
           // salva o jwt nos cookies
           setCookie(undefined, "auth", auth.content.authToken);
@@ -51,6 +55,18 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     }
 
     authByMagicLink();
+
+    const { auth: token } = parseCookies();
+
+    async function recoverUserInfo() {
+      if (token) {
+        const user = await findUserByCredential();
+
+        setUser(user);
+      }
+    }
+
+    recoverUserInfo();
   }, [query.magicAuthToken]);
 
   const login = (userData: User) => {
@@ -58,7 +74,8 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = () => {
-    setUser(null);
+    setUser(undefined);
+    destroyCookie(undefined, "auth");
   };
 
   return (

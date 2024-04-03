@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button } from "../ui/button";
 import { Icons } from "../icons";
-import { useSession } from "@/contexts/user-context";
+import { useSession } from "@/contexts/use-session";
 import { destroyCookie } from "nookies";
 import { useRouter } from "next/router";
 

@@ -1,129 +1,65 @@
-import * as React from "react";
+import { User } from "next-auth";
+import { Button } from "@/components/ui/button";
 
-import { cn } from "@/lib/utils";
-import {
-  Menubar,
-  MenubarContent,
-  MenubarItem,
-  MenubarMenu,
-  MenubarTrigger,
-} from "@/components/ui/menubar";
-import {
-  NavigationMenu,
-  NavigationMenuLink,
-} from "@/components/ui/navigation-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { ChevronDownIcon } from "@radix-ui/react-icons";
-import { Button } from "../ui/button";
-import { LogIn, LogOut } from "lucide-react";
-import { useRouter } from "next/router";
-import { useSession } from "@/contexts/user-context";
-import { destroyCookie } from "nookies";
+import { MainNav, MainNavItem } from "./main-nav";
+import { UserAccountNav } from "./user-account-nav";
+import { useScroll } from "../hooks/use-scroll";
+import { ArrowRight } from "lucide-react";
+import { useSigninModal } from "../hooks/use-signin-modal";
+import { useSession } from "@/contexts/use-session";
+import { SignInModal } from "../shared/signin-modal";
+import { parseCookies } from "nookies";
 
-export function Navbar() {
-  const { user } = useSession();
-
-  const { push } = useRouter();
-
-  return (
-    <div className="max-w-screen flex justify-between p-3 items-center px-6">
-      <NavigationMenu>
-        <div>
-          <h1>Logo</h1>
-        </div>
-        {/* <NavigationMenuList>
-         
-          <NavigationMenuItem>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Documentation
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Documentation
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <Link href="/docs" legacyBehavior passHref>
-              <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                Documentation
-              </NavigationMenuLink>
-            </Link>
-          </NavigationMenuItem>
-        </NavigationMenuList> */}
-      </NavigationMenu>
-      {/* <Dialog>
-        <DialogHeader>Teste</DialogHeader>
-        <DialogContent>Conteudo</DialogContent>
-        <DialogFooter>
-          <DialogClose>
-            <Button>Fechar</Button>
-          </DialogClose>
-        </DialogFooter>
-      </Dialog> */}
-
-      {user ? (
-        <Menubar className="border-none">
-          <MenubarMenu>
-            <MenubarTrigger>
-              <Avatar>
-                <AvatarImage src={user?.profileImageUrl} alt="avatar" />
-                <AvatarFallback>
-                  {user?.name?.slice(0, 2).toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <ChevronDownIcon className="ml-2" />
-            </MenubarTrigger>
-            <MenubarContent>
-              <MenubarItem
-                onClick={() => {
-                  destroyCookie(undefined, "auth");
-                  push("/auth");
-                }}
-                className="cursor-pointer"
-              >
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
-              </MenubarItem>
-            </MenubarContent>
-          </MenubarMenu>
-        </Menubar>
-      ) : (
-        <Button onClick={() => push("/auth")}>
-          <LogIn className="h-4 w-4 mr-2" />
-          Sign In
-        </Button>
-      )}
-    </div>
-  );
+interface NavBarProps {
+  items?: MainNavItem[];
+  children?: React.ReactNode;
+  rightElements?: React.ReactNode;
+  scroll?: boolean;
 }
 
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
+export function NavBar({
+  items,
+  children,
+  rightElements,
+  scroll = false,
+}: NavBarProps) {
+  const scrolled = useScroll(50);
+  const signInModal = useSigninModal();
+
+  const { user } = useSession();
+
+  const { auth: isAuth } = parseCookies();
+
   return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
+    <header
+      className={`sticky top-0 z-40 flex w-full justify-center bg-background/60 backdrop-blur-xl transition-all ${
+        scroll ? (scrolled ? "border-b" : "bg-background/0") : "border-b"
+      }`}
+    >
+      <div className="container flex h-16 items-center justify-between py-4">
+        <MainNav items={items}>{children}</MainNav>
+
+        <div className="flex items-center space-x-3">
+          {rightElements}
+
+          {!!isAuth && user ? (
+            <UserAccountNav user={user} />
+          ) : (
+            <>
+              <SignInModal />
+              <Button
+                className="gap-2 px-4"
+                variant="default"
+                rounded="full"
+                onClick={signInModal.onOpen}
+              >
+                <span>Sign In</span>
+                <ArrowRight className="size-4" />
+              </Button>
+            </>
           )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
+        </div>
+      </div>
+    </header>
   );
-});
-ListItem.displayName = "ListItem";
+}
