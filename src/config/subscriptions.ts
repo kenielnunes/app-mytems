@@ -43,8 +43,8 @@ export const pricingData: SubscriptionPlan[] = [
       yearly: 144,
     },
     stripeIds: {
-      monthly: process.env.NEXT_PUBLIC_STRIPE_PRO_MONTHLY_PLAN_ID ?? "",
-      yearly: process.env.NEXT_PUBLIC_STRIPE_PRO_YEARLY_PLAN_ID ?? "",
+      monthly: process.env.NEXT_PUBLIC_STRIPE_PRODUCT_PRO_PLAN_MONTHLY_ID ?? "",
+      yearly: process.env.NEXT_PUBLIC_STRIPE_PRODUCT_PRO_PLAN_ANNUAL_ID ?? "",
     },
   },
   {
@@ -63,8 +63,10 @@ export const pricingData: SubscriptionPlan[] = [
       yearly: 300,
     },
     stripeIds: {
-      monthly: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_MONTHLY_PLAN_ID ?? "",
-      yearly: process.env.NEXT_PUBLIC_STRIPE_BUSINESS_YEARLY_PLAN_ID ?? "",
+      monthly:
+        process.env.NEXT_PUBLIC_STRIPE_PRODUCT_BUSINESS_PLAN_MONTHLY_ID ?? "",
+      yearly:
+        process.env.NEXT_PUBLIC_STRIPE_PRODUCT_BUSINESS_PLAN_ANNUAL_ID ?? "",
     },
   },
 ];
