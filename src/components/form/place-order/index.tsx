@@ -1,4 +1,3 @@
-import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { Button } from "../../ui/button";
 import { Plus } from "lucide-react";
@@ -12,8 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SetOrderName } from "./set-order-name";
 import { SetOrderGame } from "./set-order-game";
+import { useSession } from "@/contexts/use-session";
 
 type PlaceOrderSteps =
   | "set-game"
@@ -23,7 +22,7 @@ type PlaceOrderSteps =
   | "set-order-price";
 
 export function PlaceOrder() {
-  const { data } = useSession();
+  const { user } = useSession();
 
   const [step, setStep] = useState<PlaceOrderSteps>("set-game");
 
@@ -35,7 +34,7 @@ export function PlaceOrder() {
     "set-order-price": <></>,
   };
 
-  if (data?.user) {
+  if (user) {
     return (
       <>
         <Dialog>

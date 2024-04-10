@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { UserAuthForm } from "@/components/auth/user-auth-form";
+import { UserMagicLinkAuthForm } from "@/components/auth/user-magic-link-auth-form";
 
 export const metadata: Metadata = {
   title: "Authentication",
@@ -67,14 +67,12 @@ export default function AuthenticationPage() {
         <div className="lg:p-8 ">
           <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
             <div className="flex flex-col space-y-2 text-center">
-              <h1 className="text-2xl font-semibold tracking-tight">
-                Create an account
-              </h1>
+              <h1 className="text-2xl font-semibold tracking-tight">Sign In</h1>
               <p className="text-sm text-muted-foreground">
-                Enter your email below to create your account
+                Enter your email below to sign in
               </p>
             </div>
-            <UserAuthForm />
+            <UserMagicLinkAuthForm />
             <p className="px-8 text-center text-sm text-muted-foreground">
               By clicking continue, you agree to our{" "}
               <Link

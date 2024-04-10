@@ -1,7 +1,4 @@
-"use client";
-
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
@@ -49,7 +46,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
       setIsLoading(false);
 
       return created;
-    } catch (error) {
+    } catch (error: any) {
       alert(error.response.data.message);
       setIsLoading(false);
     }
