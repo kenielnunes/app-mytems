@@ -11,8 +11,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { SetOrderGame } from "./set-order-game";
 import { useSession } from "@/contexts/use-session";
+import { CreateItemForm } from "./create-item-form";
 
 type PlaceOrderSteps =
   | "set-game"
@@ -27,7 +27,7 @@ export function PlaceOrder() {
   const [step, setStep] = useState<PlaceOrderSteps>("set-game");
 
   const stepComponents: Record<PlaceOrderSteps, JSX.Element> = {
-    "set-game": <SetOrderGame />,
+    "set-game": <CreateItemForm />,
     "set-order-date": <></>,
     "set-order-images": <></>,
     "set-order-name": <></>,
@@ -45,12 +45,12 @@ export function PlaceOrder() {
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Place Order</DialogTitle>
+              <DialogTitle>Place Item to Sell</DialogTitle>
               <DialogDescription>
                 Place your order to sell any item
               </DialogDescription>
             </DialogHeader>
-            {stepComponents[step]}
+            <CreateItemForm />
             <DialogFooter className="sm:justify-start">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">
