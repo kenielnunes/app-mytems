@@ -5,7 +5,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CreditCard, LayoutDashboard, LogOut, Settings } from "lucide-react";
+import {
+  CreditCard,
+  LayoutDashboard,
+  LogOut,
+  Settings,
+  ShoppingBag,
+  Store,
+} from "lucide-react";
 import { UserAvatar } from "../shared/user-avatar";
 import Link from "next/link";
 import { useSession } from "@/contexts/use-session";
@@ -36,6 +43,13 @@ export function UserAccountNav({ user }: UserAccountNavProps) {
             )}
           </div>
         </div>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href="/my-items" className="flex items-center space-x-2.5">
+            <ShoppingBag className="size-4" />
+            <p className="text-sm">Meus Itens</p>
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Link href="/dashboard" className="flex items-center space-x-2.5">

@@ -12,17 +12,12 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
+import { FileUploader } from "@/components/ui/file-uploader";
 
 export function StepThree({ onPrevious }: { onPrevious: () => void }) {
   const { control, setValue } = useFormContext();
-  const {
-    fields: fileFields,
-    remove: removeFile,
-    append: appendFile,
-  } = useFieldArray({
-    control,
-    name: "files",
-  });
+
+  console.log(control._fields);
 
   function handleFileChange(e: ChangeEvent<HTMLInputElement>, index: number) {
     const files = e.target.files;
@@ -37,32 +32,34 @@ export function StepThree({ onPrevious }: { onPrevious: () => void }) {
     <div>
       <div className="space-y-4">
         <FormLabel>Arquivos de Imagem</FormLabel>
-        {fileFields.map((field, index) => (
-          <div key={field.id} className="flex space-x-2 items-center">
-            <FormField
-              control={control}
-              name={`files.${index}`}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={(e) => handleFileChange(e, index)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="button" onClick={() => removeFile(index)}>
-              Remover
-            </Button>
-          </div>
-        ))}
-        <Button type="button" onClick={() => appendFile(null)}>
-          Adicionar Arquivo
-        </Button>
+        <FormField
+          control={control}
+          name="files"
+          render={({ field }) => (
+            <div className="space-y-6">
+              <FormItem className="w-full">
+                <FormLabel>Images</FormLabel>
+                <FormControl>
+                  <FileUploader
+                    value={field.value}
+                    onValueChange={(files) => {
+                      console.log("values files", files);
+
+                      setValue("files", files);
+                    }}
+                    maxFileCount={4}
+                    maxSize={4 * 1024 * 1024}
+                    multiple
+                    // pass the onUpload function here for direct upload
+                    // onUpload={uploadFiles}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            </div>
+          )}
+        />
+        <Button type="button">Adicionar Arquivo</Button>
       </div>
       <Button type="button" onClick={onPrevious}>
         Anterior

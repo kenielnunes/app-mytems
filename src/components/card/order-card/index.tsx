@@ -8,33 +8,43 @@ import {
 import { Button } from "@/components/ui/button";
 
 type OrderCardProps = {
-  order: {
-    seller: string;
-  };
+  seller: string;
+  imageUrl: string;
+  price: number;
+  title: string;
+  description: string;
+  game: string;
 };
 
-export function OrderCard({ order }: OrderCardProps) {
+export function OrderCard({
+  description,
+  game,
+  imageUrl,
+  price,
+  seller,
+  title,
+}: OrderCardProps) {
   return (
     <div className="relative overflow-hidden rounded-lg">
       <img
         alt="Product 1"
         className="object-cover w-full aspect-video"
         height={400}
-        src="/placeholder.svg"
+        src={imageUrl}
         width={600}
       />
       <div className="bg-white p-4 dark:bg-gray-950">
-        <h3 className="font-semibold text-lg md:text-xl">Stylish Sunglasses</h3>
+        <h3 className="font-semibold text-lg md:text-xl">{title}</h3>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          UV protection
+          {description}
         </p>
-        <h4 className="font-semibold text-base md:text-lg">$29.99</h4>
+        <h4 className="font-semibold text-base md:text-lg">{price}</h4>
         <div className="flex justify-between items-center mt-4">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Seller:
             <HoverCard>
               <HoverCardTrigger asChild>
-                <span className="cursor-pointer"> {order.seller}</span>
+                <span className="cursor-pointer"> {seller}</span>
               </HoverCardTrigger>
               <HoverCardContent className="border-none bg-transparent">
                 <UserInfoCard />

@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
-import { z } from "zod";
+import { any, z } from "zod";
 import { useState } from "react";
 
 import { Form } from "@/components/ui/form";
@@ -26,11 +26,7 @@ const formSchema = z.object({
       additionalPrice: z.string().transform((value) => Number(value)),
     })
   ),
-  files: z.array(
-    z.object({
-      file: z.instanceof(File),
-    })
-  ),
+  files: z.any(),
 });
 
 export function CreateItemForm() {
@@ -46,18 +42,21 @@ export function CreateItemForm() {
     },
   });
 
+  console.log(form.formState.errors);
+
   const [step, setStep] = useState(0);
 
   const nextStep = () => setStep((prevStep) => prevStep + 1);
   const previousStep = () => setStep((prevStep) => prevStep - 1);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log("values", values);
     try {
       const formData = new FormData();
 
       // Adiciona cada arquivo individualmente
       values.files.forEach((file) => {
-        formData.append("files", file.file);
+        formData.append("files", file);
       });
 
       if (values.availableOptions && values.availableOptions.length > 0) {
