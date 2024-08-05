@@ -63,7 +63,7 @@ export function UserInfoCard() {
   );
 }
 
-function HeartIcon(props) {
+function HeartIcon(props: any) {
   return (
     <svg
       {...props}
@@ -82,7 +82,7 @@ function HeartIcon(props) {
   );
 }
 
-function MessageCircleIcon(props) {
+function MessageCircleIcon(props: any) {
   return (
     <svg
       {...props}
@@ -101,7 +101,7 @@ function MessageCircleIcon(props) {
   );
 }
 
-function RepeatIcon(props) {
+function RepeatIcon(props: any) {
   return (
     <svg
       {...props}
@@ -123,7 +123,7 @@ function RepeatIcon(props) {
   );
 }
 
-function TwitterIcon(props) {
+function TwitterIcon(props: any) {
   return (
     <svg
       {...props}

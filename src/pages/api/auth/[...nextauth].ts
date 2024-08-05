@@ -46,11 +46,9 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         } catch (error: any) {
           if (account?.provider === "steam") {
             const createdUser = await createUser({
-              originProfileUrl: profileSteam?.profileurl ?? "",
               origin: "STEAM",
               email: user.email ?? "",
               name: user.name ?? "",
-              profileImageUrl: profileSteam?.avatar ?? "",
             });
 
             console.log(createdUser);

@@ -47,6 +47,7 @@ export function UserMagicLinkAuthForm({
   const onSubmit = async (data: UserAuth) => {
     setIsLoading(true);
 
+    console.log("data.email", data.email);
     // Aqui você pode fazer o que quiser com os dados, como enviar para o servidor.
     try {
       const auth = await userAuth(data.email);

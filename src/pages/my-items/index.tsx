@@ -21,7 +21,7 @@ export default function MyItems() {
   return (
     <>
       <section className="grid grid-cols-4">
-        {items?.map((item) => {
+        {items?.map((item: any) => {
           return (
             <OrderCard
               description={item.description}

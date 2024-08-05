@@ -1,8 +1,8 @@
 import { api } from "../../api";
 
-export const userAuth = async (mail: string) => {
+export const userAuth = async (email: string) => {
   const urlParams = new URLSearchParams({
-    mail: mail,
+    email: email,
   });
 
   const { data } = await api.post(`/auth/send-magic-link?${urlParams}`);

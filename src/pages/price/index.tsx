@@ -12,7 +12,7 @@ export default function PricingPage() {
 
   return (
     <div className="flex w-full flex-col gap-16 py-8 md:py-8">
-      <PricingCards userId={user?.id} subscriptionPlan={"subscriptionPlan"} />
+      {/* <PricingCards userId={user?.id} subscriptionPlan={"subscriptionPlan"} /> */}
       <hr className="container" />
       <PricingFaq />
     </div>

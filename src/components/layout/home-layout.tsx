@@ -1,5 +1,4 @@
 import React, { Suspense } from "react";
-import { Navbar } from "./navbar";
 
 interface HomeLayoutProps {
   children: React.ReactNode;

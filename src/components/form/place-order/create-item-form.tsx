@@ -55,7 +55,7 @@ export function CreateItemForm() {
       const formData = new FormData();
 
       // Adiciona cada arquivo individualmente
-      values.files.forEach((file) => {
+      values.files.forEach((file: File) => {
         formData.append("files", file);
       });
 
@@ -88,7 +88,7 @@ export function CreateItemForm() {
       });
 
       console.log(request);
-    } catch (error) {
+    } catch (error: any) {
       toast({
         variant: "default",
         title: error.message,

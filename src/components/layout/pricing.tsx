@@ -207,14 +207,14 @@ export function Pricing() {
                 >
                   {tier.description}
                 </p>
-                <p className="mt-6 flex items-baseline gap-x-1">
+                {/* <p className="mt-6 flex items-baseline gap-x-1">
                   <span
                     className={cn(
                       tier.featured
                         ? "text-white dark:text-black"
                         : "text-black dark:text-white",
                       "text-4xl font-bold tracking-tight",
-                      tier.discountPrice && tier.discountPrice[frequency.value]
+                      tier.discountPrice && tier.discountPrice[frequency.value as any]
                         ? "line-through"
                         : ""
                     )}
@@ -248,7 +248,7 @@ export function Pricing() {
                       {frequency.priceSuffix}
                     </span>
                   ) : null}
-                </p>
+                </p> */}
                 <a
                   href={tier.href}
                   aria-describedby={tier.id}
