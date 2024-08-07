@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button } from "../../ui/button";
-import { Plus } from "lucide-react";
+import { Plus, PlusCircle } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -14,33 +14,19 @@ import {
 import { useSession } from "@/contexts/use-session";
 import { CreateItemForm } from "./create-item-form";
 
-type PlaceOrderSteps =
-  | "set-game"
-  | "set-order-name"
-  | "set-order-images"
-  | "set-order-date"
-  | "set-order-price";
-
-export function PlaceOrder() {
+export function AddProduct() {
   const { user } = useSession();
-
-  const [step, setStep] = useState<PlaceOrderSteps>("set-game");
-
-  const stepComponents: Record<PlaceOrderSteps, JSX.Element> = {
-    "set-game": <CreateItemForm />,
-    "set-order-date": <></>,
-    "set-order-images": <></>,
-    "set-order-name": <></>,
-    "set-order-price": <></>,
-  };
 
   if (user) {
     return (
       <>
         <Dialog>
           <DialogTrigger asChild>
-            <Button className="absolute bottom-4 right-4">
-              <Plus className="h-4 w-4" />
+            <Button size="sm" className="h-7 gap-1">
+              <PlusCircle className="h-3.5 w-3.5" />
+              <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                Add Product
+              </span>
             </Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-md">

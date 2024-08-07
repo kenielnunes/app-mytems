@@ -59,19 +59,15 @@ export function CreateItemForm() {
         formData.append("files", file);
       });
 
-      if (values.availableOptions && values.availableOptions.length > 0) {
-        for (let i = 0; i < values.availableOptions.length; i++) {
-          formData.append(
-            "availableOptions",
-            JSON.stringify({
-              additionalPrice: values.availableOptions[i].additionalPrice,
-              name: values.availableOptions[i].name,
-            })
-          );
-        }
-      } else {
-        formData.append("availableOptions", JSON.stringify([]));
-      }
+      const availableOpt: any[] = [];
+      values.availableOptions.forEach((options) => {
+        availableOpt.push({
+          name: options.name,
+          additionalPrice: options.additionalPrice,
+        });
+      });
+
+      formData.append("availableOptions", JSON.stringify(availableOpt));
 
       formData.append("description", values.description);
       formData.append("basePrice", String(values.basePrice));
@@ -98,9 +94,11 @@ export function CreateItemForm() {
     }
   }
 
+  console.log("form values", form.watch());
+
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         {step === 0 && <StepOne onNext={nextStep} />}
         {step === 1 && <StepTwo onNext={nextStep} onPrevious={previousStep} />}
         {step === 2 && <StepThree onPrevious={previousStep} />}

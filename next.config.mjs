@@ -7,7 +7,7 @@ const nextConfig = {
     NEXT_PUBLIC_STEAM_SECRET: process.env.NEXT_PUBLIC_STEAM_SECRET,
   },
   images: {
-    domains: ["randomuser.me"],
+    domains: ["randomuser.me", "mocmuunzssnwfhssxltd.supabase.co"],
   },
 };
 
