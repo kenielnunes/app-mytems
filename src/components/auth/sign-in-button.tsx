@@ -4,10 +4,12 @@ import { Icons } from "../icons";
 import { useSession } from "@/contexts/use-session";
 import { destroyCookie } from "nookies";
 import { useRouter } from "next/router";
+import { useSigninModal } from "../hooks/use-signin-modal";
+import { SignInModal } from "../shared/signin-modal";
 
 export function SignInButton() {
   const { user } = useSession();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { onOpen } = useSigninModal();
 
   const { push } = useRouter();
 
@@ -27,21 +29,9 @@ export function SignInButton() {
   }
 
   return (
-    <></>
-    // <Button
-    //   onClick={() => {
-    //     setIsLoading(true);
-    //     signIn("steam", {
-    //       callbackUrl: "/market",
-    //     });
-    //   }}
-    // >
-    //   {isLoading ? (
-    //     <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
-    //   ) : (
-    //     <Icons.steam className="mr-2 h-4 w-4" />
-    //   )}
-    //   Steam
-    // </Button>
+    <>
+      <Button onClick={onOpen}>Sign in</Button>
+      <SignInModal />
+    </>
   );
 }

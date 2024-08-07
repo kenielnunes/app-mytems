@@ -67,6 +67,7 @@ import { parseCookies } from "nookies";
 import { Item } from "@/types/item";
 import { AddProduct } from "@/components/form/place-order";
 import { Router, useRouter } from "next/router";
+import { Suspense } from "react";
 
 export default function Items() {
   const { data, error } = useQuery<Item[]>({
@@ -156,61 +157,63 @@ export default function Items() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data?.map((item) => {
-                    return (
-                      <TableRow>
-                        <TableCell className="hidden sm:table-cell">
-                          <Image
-                            alt="Product image"
-                            className="aspect-square rounded-md object-cover"
-                            height="64"
-                            src={item.itemImages[0].imageUrl}
-                            width="64"
-                          />
-                        </TableCell>
-                        <TableCell className="font-medium">
-                          {item.name}
-                        </TableCell>
-                        <TableCell>
-                          <Badge variant="outline"> {item.name}</Badge>
-                        </TableCell>
-                        <TableCell>{item.basePrice}</TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          25
-                        </TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          {item.createdAt}
-                        </TableCell>
-                        <TableCell>
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button
-                                aria-haspopup="true"
-                                size="icon"
-                                variant="ghost"
-                              >
-                                <MoreHorizontal className="h-4 w-4" />
-                                <span className="sr-only">Toggle menu</span>
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuItem
-                                onClick={() =>
-                                  push({
-                                    pathname: `/item-details/${item.id}`,
-                                  })
-                                }
-                              >
-                                Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem>Delete</DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
+                  <Suspense fallback={"Carregando..."}>
+                    {data?.map((item) => {
+                      return (
+                        <TableRow>
+                          <TableCell className="hidden sm:table-cell">
+                            <Image
+                              alt="Product image"
+                              className="aspect-square rounded-md object-cover"
+                              height="64"
+                              src={item.itemImages?.[0]?.imageUrl}
+                              width="64"
+                            />
+                          </TableCell>
+                          <TableCell className="font-medium">
+                            {item.name}
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant="outline"> {item.name}</Badge>
+                          </TableCell>
+                          <TableCell>{item.basePrice}</TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            25
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            {item.createdAt}
+                          </TableCell>
+                          <TableCell>
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <Button
+                                  aria-haspopup="true"
+                                  size="icon"
+                                  variant="ghost"
+                                >
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  <span className="sr-only">Toggle menu</span>
+                                </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                <DropdownMenuItem
+                                  onClick={() =>
+                                    push({
+                                      pathname: `/edit-ad/${item.id}`,
+                                    })
+                                  }
+                                >
+                                  Edit
+                                </DropdownMenuItem>
+                                <DropdownMenuItem>Delete</DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </Suspense>
                 </TableBody>
               </Table>
             </CardContent>

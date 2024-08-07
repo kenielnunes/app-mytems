@@ -21,7 +21,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,31 +30,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useScroll } from "../hooks/use-scroll";
-import { useSigninModal } from "../hooks/use-signin-modal";
-import { useSession } from "@/contexts/use-session";
 import { parseCookies } from "nookies";
+import { SignInButton } from "../auth/sign-in-button";
 
-interface NavBarProps {
-  children?: React.ReactNode;
-  rightElements?: React.ReactNode;
-  scroll?: boolean;
-}
+export function SubNav() {
+  const [isAuth, setIsAuth] = React.useState(false);
 
-export function SubNav({
-  children,
-  rightElements,
-  scroll = false,
-}: NavBarProps) {
-  const scrolled = useScroll(50);
-  const signInModal = useSigninModal();
-  const { user } = useSession();
-  const { auth: isAuth } = parseCookies();
+  React.useEffect(() => {
+    const { auth } = parseCookies();
+    setIsAuth(!!auth);
+  }, []);
+
   const router = useRouter();
   const pathSegments = router.pathname.split("/").filter(Boolean);
 
   return (
-    <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
+    <nav className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet>
         <SheetTrigger asChild>
           <Button size="icon" variant="outline" className="sm:hidden">
@@ -128,13 +118,9 @@ export function SubNav({
           className="w-full rounded-lg bg-background pl-8 md:w-[200px] lg:w-[320px]"
         /> */}
       </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon"
-            className="overflow-hidden rounded-full"
-          >
+      {!!isAuth ? (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild className="cursor-pointer">
             <Image
               src="/placeholder-user.jpg"
               width={40}
@@ -142,17 +128,19 @@ export function SubNav({
               alt="Avatar"
               className="overflow-hidden rounded-full"
             />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Settings</DropdownMenuItem>
-          <DropdownMenuItem>Support</DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Logout</DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </header>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>My Account</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Settings</DropdownMenuItem>
+            <DropdownMenuItem>Support</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem>Logout</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      ) : (
+        <SignInButton />
+      )}
+    </nav>
   );
 }
