@@ -12,7 +12,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useSession } from "@/contexts/use-session";
-import { CreateItemForm } from "./create-item-form";
+import { CreateAdForm } from "./create-ad-form";
 
 export function AddProduct() {
   const { user } = useSession();
@@ -29,14 +29,14 @@ export function AddProduct() {
               </span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-2xl">
             <DialogHeader>
               <DialogTitle>Place Item to Sell</DialogTitle>
               <DialogDescription>
                 Place your order to sell any item
               </DialogDescription>
             </DialogHeader>
-            <CreateItemForm />
+            <CreateAdForm />
             <DialogFooter className="sm:justify-start">
               <DialogClose asChild>
                 <Button type="button" variant="secondary">

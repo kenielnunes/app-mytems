@@ -13,20 +13,20 @@ export function SignInButton() {
 
   const { push } = useRouter();
 
-  if (user) {
-    return (
-      <div>
-        <Button
-          onClick={() => {
-            destroyCookie(undefined, "auth");
-            push("/auth");
-          }}
-        >
-          Sair
-        </Button>
-      </div>
-    );
-  }
+  // if (user) {
+  //   return (
+  //     <div>
+  //       <Button
+  //         onClick={() => {
+  //           destroyCookie(undefined, "auth");
+  //           push("/auth");
+  //         }}
+  //       >
+  //         Sair
+  //       </Button>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>

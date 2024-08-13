@@ -107,30 +107,29 @@ export function ImageCropper({
           <AvatarImage
             src={croppedImage ? croppedImage : selectedFile?.preview}
             alt="@shadcn"
-            className="rounded-full"
           />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
       </DialogTrigger>
-      <DialogContent className="p-0 gap-0">
-        <div className="p-6 size-full">
+      <DialogContent className="p-0 gap-0 max-w-xl">
+        <div className="p-6">
           <ReactCrop
             circularCrop
             crop={crop}
             onChange={(_, percentCrop) => setCrop(percentCrop)}
             onComplete={(c) => onCropComplete(c)}
             aspect={aspect}
-            className="w-full" // Remova o estilo de recorte aqui
+            className="w-full h-80"
           >
-            <Avatar className="size-full rounded-full overflow-hidden">
+            <Avatar className="w-full h-80 rounded-none">
               <AvatarImage
                 ref={imgRef}
-                className="size-full"
+                className="rounded-none"
                 alt="Image Cropper Shell"
                 src={selectedFile?.preview}
                 onLoad={onImageLoad}
               />
-              <AvatarFallback className="size-full min-h-[460px] rounded-full">
+              <AvatarFallback className="size-full min-h-[460px] rounded-none">
                 Loading...
               </AvatarFallback>
             </Avatar>
@@ -151,15 +150,7 @@ export function ImageCropper({
               Cancel
             </Button>
           </DialogClose>
-          <Button
-            type="submit"
-            size={"sm"}
-            className="w-fit"
-            onClick={() => {
-              onCrop();
-              setSelectedFile(selectedFile);
-            }}
-          >
+          <Button type="submit" size={"sm"} className="w-fit" onClick={onCrop}>
             <CropIcon className="mr-1.5 size-4" />
             Crop
           </Button>

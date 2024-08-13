@@ -61,7 +61,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useQuery } from "@tanstack/react-query";
-import { findItemsByUser } from "@/services/api/modules/item/find-items-by-user";
+import { findAdsByUser } from "@/services/api/modules/item/find-ads-by-user";
 import { api } from "@/services/api/api";
 import { parseCookies } from "nookies";
 import { Item } from "@/types/item";
@@ -69,7 +69,7 @@ import { AddProduct } from "@/components/form/place-order";
 import { Router, useRouter } from "next/router";
 import { Suspense } from "react";
 
-export default function Items() {
+export default function Ads() {
   const { data, error } = useQuery<Item[]>({
     queryKey: ["items"],
     queryFn: async () => {
@@ -77,7 +77,7 @@ export default function Items() {
 
       api.defaults.headers["Authorization"] = `Bearer ${auth}`;
 
-      const res = await findItemsByUser();
+      const res = await findAdsByUser();
       return await res.content;
     },
   });
