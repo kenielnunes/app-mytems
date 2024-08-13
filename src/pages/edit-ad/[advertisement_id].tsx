@@ -254,11 +254,11 @@ export default function ItemDetails({ item }: ItemDetailsProps) {
                     alt="Product image"
                     className="aspect-square w-full rounded-md object-cover"
                     height="300"
-                    src={item.itemImages?.[0]?.imageUrl || "/placeholder.svg"}
+                    src={item.images?.[0]?.imageUrl || "/placeholder.svg"}
                     width="300"
                   />
                   <div className="grid grid-cols-3 gap-2">
-                    {item.itemImages?.slice(1)?.map((image, index) => (
+                    {item.images?.slice(1)?.map((image, index) => (
                       <button key={index}>
                         <Image
                           alt={`Product image ${index + 1}`}

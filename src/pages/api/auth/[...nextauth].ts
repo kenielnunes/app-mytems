@@ -1,6 +1,5 @@
 // pages/api/auth/[...nextauth].ts
 import { userAuth } from "@/services/api/modules/auth/send-auth-magic-link";
-import { createUser } from "@/services/api/modules/user/create-user";
 import { randomBytes, randomUUID } from "crypto";
 import { NextApiRequest, NextApiResponse } from "next";
 
@@ -45,13 +44,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           }
         } catch (error: any) {
           if (account?.provider === "steam") {
-            const createdUser = await createUser({
-              origin: "STEAM",
-              email: user.email ?? "",
-              name: user.name ?? "",
-            });
+            // const createdUser = await createUser({
+            //   origin: "STEAM",
+            //   email: user.email ?? "",
+            //   name: user.name ?? "",
+            // });
 
-            console.log(createdUser);
+            // console.log(createdUser);
 
             return true; // Return true to allow sign in
           }
