@@ -8,8 +8,8 @@ export interface Item {
   createdAt: string;
   updatedAt: string;
   availableOptions: AvailableOption[];
-  itemImages: ItemImage[];
-  itemQuestions: ItemQuestion[];
+  images: ItemImage[];
+  questions: ItemQuestion[];
 }
 
 export interface ItemQuestion {

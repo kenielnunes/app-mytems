@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "@/contexts/use-session";
 import { Navbar } from "@/components/layout/main-nav";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { useRouter } from "next/router";
 
 const queryClient = new QueryClient();
 
@@ -16,6 +17,8 @@ export default function App({
   Component,
   pageProps: { session, ...pageProps },
 }: AppProps) {
+  const { pathname } = useRouter();
+
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
@@ -26,7 +29,7 @@ export default function App({
             enableSystem
             disableTransitionOnChange
           >
-            <Navbar />
+            {pathname !== "/register" && <Navbar />}
             <Separator />
             <RootLayout>
               <Component {...pageProps} />

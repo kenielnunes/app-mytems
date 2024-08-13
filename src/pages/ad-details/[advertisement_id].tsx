@@ -126,7 +126,7 @@ export default function AdDetails({ item }: AdDetailsProps) {
                 >
                   <div className="relative  basis-3/4">
                     <CarouselMainContainer className="h-72">
-                      {item.itemImages.map((item, index) => (
+                      {item.images.map((item, index) => (
                         <SliderMainItem
                           key={index}
                           className="border border-muted flex items-center justify-center h-52 rounded-md"
@@ -142,7 +142,7 @@ export default function AdDetails({ item }: AdDetailsProps) {
                     </CarouselMainContainer>
                   </div>
                   <CarouselThumbsContainer className="basis-1/4">
-                    {item.itemImages.map((item, index) => (
+                    {item.images.map((item, index) => (
                       <SliderThumbItem
                         key={index}
                         index={index}
@@ -302,11 +302,11 @@ export default function AdDetails({ item }: AdDetailsProps) {
                     alt="Product image"
                     className="aspect-square w-full rounded-md object-cover"
                     height="300"
-                    src={item.itemImages?.[0]?.imageUrl || "/placeholder.svg"}
+                    src={item.images?.[0]?.imageUrl || "/placeholder.svg"}
                     width="300"
                   />
                   <div className="grid grid-cols-3 gap-2">
-                    {item.itemImages?.slice(1)?.map((image, index) => (
+                    {item.images?.slice(1)?.map((image, index) => (
                       <button key={index}>
                         <Image
                           alt={`Product image ${index + 1}`}
@@ -365,7 +365,7 @@ export default function AdDetails({ item }: AdDetailsProps) {
                   </div>
                 </Form>
                 <Card x-chunk="dashboard-04-chunk-1">
-                  {item.itemQuestions?.map((question) => {
+                  {item.questions?.map((question) => {
                     return (
                       <>
                         <CardHeader>

@@ -49,6 +49,11 @@
   }
 }
 
+@font-face {
+  font-family: "Virgil";
+  src: url("https://excalidraw.com/Virgil.woff2");
+}
+
 @layer base {
   * {
     @apply border-border;

@@ -166,7 +166,7 @@ export default function Items() {
                               alt="Product image"
                               className="aspect-square rounded-md object-cover"
                               height="64"
-                              src={item.itemImages?.[0]?.imageUrl}
+                              src={item.images?.[0]?.imageUrl}
                               width="64"
                             />
                           </TableCell>

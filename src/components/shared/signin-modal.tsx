@@ -30,7 +30,7 @@ export const SignInModal = () => {
           <UserMagicLinkAuthForm />
 
           <Link
-            href={"/price"}
+            href={"/register"}
             onClick={signInModal.onClose}
             className={cn(
               buttonVariants({
