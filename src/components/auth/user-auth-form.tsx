@@ -36,16 +36,16 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     setIsLoading(true);
 
     try {
-      const created = await createUser({
-        ...data,
-        origin: "PERSONAL_MAIL",
-      });
+      // const created = await createUser({
+      //   ...data,
+      //   origin: "PERSONAL_MAIL",
+      // });
 
-      console.log(created);
+      // console.log(created);
 
       setIsLoading(false);
 
-      return created;
+      return;
     } catch (error: any) {
       alert(error.response.data.message);
       setIsLoading(false);
