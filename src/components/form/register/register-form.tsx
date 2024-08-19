@@ -19,7 +19,7 @@ const formSchema = z.object({
     .string()
     .max(255, "A biografia deve ter no máximo 255 caracteres")
     .optional(),
-  birthday: z.string().min(4, "Informe uma data dew nascimento correta"),
+  birthday: z.string().min(4, "Informe uma data de nascimento correta"),
   profileImg: z.any(),
 });
 
@@ -35,12 +35,24 @@ export function RegisterForm() {
     },
   });
 
+  console.log(form.watch());
+
   const { push } = useRouter();
 
   const [step, setStep] = useState(0);
 
-  const nextStep = () => setStep((prevStep) => prevStep + 1);
-  const previousStep = () => setStep((prevStep) => prevStep - 1);
+  const nextStep = () => {
+    if (step === 0) {
+      form.trigger(["biography", "birthday", "email", "name"]);
+    }
+    setStep((prevStep) => prevStep + 1);
+  };
+  const previousStep = () => {
+    if (step === 1) {
+      form.trigger(["profileImg"]);
+    }
+    setStep((prevStep) => prevStep - 1);
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     console.log("values", values);
@@ -81,7 +93,7 @@ export function RegisterForm() {
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "error.response.data.message",
+        title: error.response.data.message,
         description: "Verifique os campos e tente novamente",
       });
     }

@@ -2,6 +2,8 @@ type User = {
   id?: string;
   name: string;
   email: string;
+  birthday: string;
+  biography: string;
   stripeCustomerId: string;
   stripeSubscriptionId: string;
   stripePriceId: string;

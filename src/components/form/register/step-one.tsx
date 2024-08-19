@@ -50,7 +50,7 @@ export function StepOne({ onNext }: { onNext: () => void }) {
         name="birthday"
         render={({ field }) => (
           <FormItem>
-            <FormLabel>Descrição</FormLabel>
+            <FormLabel>Data de nascimento</FormLabel>
             <FormControl>
               <Input placeholder="Data de nascimento" {...field} />
             </FormControl>

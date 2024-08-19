@@ -5,6 +5,7 @@ import type { AppProps } from "next/app";
 import { Separator } from "@/components/ui/separator";
 import { RootLayout } from "@/components/layout/root-layout";
 import { Toaster } from "@/components/ui/toaster";
+import { Toaster as Sonner } from "@/components/ui/sonner";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SessionProvider } from "@/contexts/use-session";
 import { Navbar } from "@/components/layout/main-nav";
@@ -34,6 +35,7 @@ export default function App({
             <RootLayout>
               <Component {...pageProps} />
               <Toaster />
+              <Sonner />
             </RootLayout>
           </ThemeProvider>
         </TooltipProvider>
