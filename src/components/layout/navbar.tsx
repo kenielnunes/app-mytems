@@ -37,11 +37,11 @@ import { useSession } from "@/contexts/use-session";
 
 export function SubNav() {
   const [isAuth, setIsAuth] = React.useState(false);
+  const { auth } = parseCookies();
 
   React.useEffect(() => {
-    const { auth } = parseCookies();
     setIsAuth(!!auth);
-  }, []);
+  }, [isAuth, auth]);
 
   const { user } = useSession();
 

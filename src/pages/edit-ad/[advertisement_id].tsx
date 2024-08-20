@@ -48,7 +48,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   console.log("context auth", auth);
 
   api.defaults.headers["Authorization"] = `Bearer ${auth}`;
-  const res = await api.get(`/ad/${advertisement_id}`);
+  const res = await api.get(`/ads/${advertisement_id}`);
   const item = await res.data;
 
   // Return the item data as props

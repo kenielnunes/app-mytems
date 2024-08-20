@@ -1,26 +1,26 @@
 import { api } from "../../api";
 
-type ItemOption = {
+type AdOption = {
   name: string;
   additionalPrice: number;
 };
 
-export type CreateItem = {
+export type CreateAd = {
   name: string;
   description: string;
   basePrice: number;
   gameId: string;
-  availableOptions: ItemOption[];
-  itemImages: ItemImage[]; // URLs das imagens
+  availableOptions: AdOption[];
+  adImages: AdImage[]; // URLs das imagens
 };
 
-export type ItemImage = {
+export type AdImage = {
   imageUrl: string;
 };
 
-export async function createItem(data: FormData) {
-  console.log("data createItem", data);
-  const request = await api.post("/items", data, {
+export async function createAd(data: FormData) {
+  console.log("data createAd", data);
+  const request = await api.post("/ads", data, {
     headers: {
       "Content-Type": "multipart/form-data", // Importante definir o tipo de conteúdo como multipart/form-data
     },

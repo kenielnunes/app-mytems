@@ -18,20 +18,36 @@ import { profileSchema } from "./schemas";
 import { useSession } from "@/contexts/use-session";
 import { updateUser } from "@/services/api/modules/user/update-user";
 import { toast } from "sonner";
+import { useEffect } from "react";
 
 type ProfileFormData = z.infer<typeof profileSchema>;
 
 export function ProfileForm() {
-  const { user } = useSession();
+  const { user, revalidateUser } = useSession();
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
     defaultValues: {
+      name: "",
+      email: "",
+      birthday: "",
+    },
+  });
+
+  const revertChanges = () => {
+    form.reset({
       name: user?.name,
       email: user?.email,
       birthday: user?.birthday,
-    },
-  });
+    });
+  };
+
+  // UseEffect para resetar os valores do formulário quando o user estiver disponível
+  useEffect(() => {
+    if (user) {
+      revertChanges();
+    }
+  }, [user, form]);
 
   const onSubmit = async (data: ProfileFormData) => {
     const { birthday } = data;
@@ -49,18 +65,19 @@ export function ProfileForm() {
 
     toast.promise(
       updateUser({
-        ...data,
+        name: data.name,
+        email: data.email,
         birthday: date,
       }),
       {
-        loading: `Uploading data...`,
+        loading: `Atualizando dados`,
         success: () => {
-          return "updated user";
+          revalidateUser();
+          return "Dados atualizados com sucesso!";
         },
-        error: `Failed to update`,
+        error: `Falha na atualização dos dados`,
       }
     );
-    // Handle form submission
   };
 
   return (
@@ -108,7 +125,12 @@ export function ProfileForm() {
             </FormItem>
           )}
         />
-        <Button type="submit">Save</Button>
+        <div className="flex justify-between">
+          <Button variant={"secondary"} type="button" onClick={revertChanges}>
+            Descartar alterações
+          </Button>
+          <Button type="submit">Salvar alterações</Button>
+        </div>
       </form>
     </Form>
   );

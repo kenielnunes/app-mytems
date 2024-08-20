@@ -7,7 +7,7 @@ export const profileSchema = z.object({
 });
 
 export const biographySchema = z.object({
-  biography: z.string().optional(),
+  biography: z.string().max(255, "Máximo de 255 caracteres").optional(),
 });
 
 export const accountSchema = z.object({

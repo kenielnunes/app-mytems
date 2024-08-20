@@ -20,13 +20,12 @@ import SvgProfileImageText from "@/components/svg/svg-profile-image-text";
 import { profileImgSchema } from "./schemas";
 import { useSession } from "@/contexts/use-session";
 import { toast } from "sonner";
-import { updateUser } from "@/services/api/modules/user/update-user";
 import { updateUserProfileImage } from "@/services/api/modules/user/update-user-profile-image";
 
 type FormValues = z.infer<typeof profileImgSchema>;
 
 export function ProfileImageForm() {
-  const { user } = useSession();
+  const { user, revalidateUser } = useSession();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(profileImgSchema),
@@ -34,6 +33,7 @@ export function ProfileImageForm() {
 
   const [selectedFile, setSelectedFile] =
     React.useState<FileWithPreview | null>(null);
+  const [croppedBlob, setCroppedBlob] = React.useState<Blob | null>(null);
   const [isDialogOpen, setDialogOpen] = React.useState(false);
 
   const accept = {
@@ -60,14 +60,22 @@ export function ProfileImageForm() {
     accept,
   });
 
-  const onSubmit = async (data: FormValues) => {
-    console.log("Form submitted with data:", data);
+  const onSubmit = async () => {
+    if (!croppedBlob) return;
+
+    console.log("croppedBlob", croppedBlob);
 
     const formData = new FormData();
+    formData.append("profileImg", croppedBlob);
 
-    formData.append("profileImg", data.profileImg);
-
-    toast.promise(updateUserProfileImage(formData));
+    toast.promise(updateUserProfileImage(formData), {
+      loading: "Atualizando imagem de perfil",
+      success: () => {
+        revalidateUser();
+        return "Imagem atualizada com sucesso!";
+      },
+      error: "Ocorreu um erro ao atualizar a imagem",
+    });
   };
 
   return (
@@ -93,23 +101,27 @@ export function ProfileImageForm() {
                           selectedFile={selectedFile}
                           setSelectedFile={(file) => {
                             setSelectedFile(file);
-                            field.onChange(selectedFile);
+                            field.onChange(file);
                           }}
+                          onCropComplete={setCroppedBlob} // Passando o blob cortado
                         />
                       ) : (
-                        <Avatar
+                        <div
                           {...getRootProps()}
-                          className="size-36 cursor-pointer ring-offset-2 ring-2 ring-slate-200"
+                          className="relative rounded-full group cursor-pointer"
                         >
                           <input {...getInputProps()} />
-                          <AvatarImage
-                            src={user?.profileImageUrl}
-                            alt="Profile Image"
-                          />
-                          <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
+                          <Avatar className="w-36 h-36 cursor-pointer ring-offset-2 ring-2 ring-slate-200">
+                            <AvatarImage src={user?.profileImageUrl} />
+                            <AvatarFallback>{user?.name}</AvatarFallback>
+                          </Avatar>
+
+                          <div className="absolute inset-0 rounded-full flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <p className="text-white">Trocar imagem</p>
+                          </div>
+                        </div>
                       )}
-                      <div className="absolute -bottom-12 left-28">
+                      <div className="absolute -bottom-12 left-28 ">
                         <SvgProfileImageText />
                       </div>
                     </div>
@@ -120,8 +132,11 @@ export function ProfileImageForm() {
             />
           </div>
         </div>
-        <div className="flex justify-between">
-          <Button type="submit">Atualizar</Button>
+
+        <div className="w-full flex items-center justify-center">
+          <Button disabled={!selectedFile} type="submit">
+            Salvar imagem de perfil
+          </Button>
         </div>
       </form>
     </Form>

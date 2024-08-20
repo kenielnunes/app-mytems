@@ -1,30 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import {
-  File,
-  Home,
-  LineChart,
-  ListFilter,
-  MoreHorizontal,
-  Package,
-  Package2,
-  PanelLeft,
-  PlusCircle,
-  Search,
-  Settings,
-  ShoppingCart,
-  Users2,
-} from "lucide-react";
+import { File, ListFilter, MoreHorizontal } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -43,8 +21,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   Table,
   TableBody,
@@ -54,20 +30,17 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
 import { useQuery } from "@tanstack/react-query";
 import { findAdsByUser } from "@/services/api/modules/item/find-ads-by-user";
 import { api } from "@/services/api/api";
 import { parseCookies } from "nookies";
 import { Item } from "@/types/item";
 import { AddProduct } from "@/components/form/place-order";
-import { Router, useRouter } from "next/router";
-import { Suspense } from "react";
+import { useRouter } from "next/router";
+import { Suspense, useEffect } from "react";
+import { formatDistance } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 export default function Ads() {
   const { data, error } = useQuery<Item[]>({
@@ -181,7 +154,12 @@ export default function Ads() {
                             25
                           </TableCell>
                           <TableCell className="hidden md:table-cell">
-                            {item.createdAt}
+                            há{" "}
+                            {formatDistance(
+                              new Date(item.createdAt),
+                              new Date(),
+                              { locale: ptBR }
+                            )}
                           </TableCell>
                           <TableCell>
                             <DropdownMenu>

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { type SyntheticEvent } from "react";
-
 import ReactCrop, {
   centerCrop,
   makeAspectCrop,
@@ -32,6 +31,7 @@ interface ImageCropperProps {
   setDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   selectedFile: FileWithPreview | null;
   setSelectedFile: React.Dispatch<React.SetStateAction<FileWithPreview | null>>;
+  onCropComplete: (croppedBlob: Blob) => void;
 }
 
 export function ImageCropper({
@@ -39,14 +39,16 @@ export function ImageCropper({
   setDialogOpen,
   selectedFile,
   setSelectedFile,
+  onCropComplete,
 }: ImageCropperProps) {
   const aspect = 1;
 
   const imgRef = React.useRef<HTMLImageElement | null>(null);
-
   const [crop, setCrop] = React.useState<Crop>();
+  const [completedCrop, setCompletedCrop] = React.useState<PixelCrop | null>(
+    null
+  );
   const [croppedImageUrl, setCroppedImageUrl] = React.useState<string>("");
-  const [croppedImage, setCroppedImage] = React.useState<string>("");
 
   function onImageLoad(e: SyntheticEvent<HTMLImageElement>) {
     if (aspect) {
@@ -55,26 +57,20 @@ export function ImageCropper({
     }
   }
 
-  function onCropComplete(crop: PixelCrop) {
-    if (imgRef.current && crop.width && crop.height) {
-      const croppedImageUrl = getCroppedImg(imgRef.current, crop);
-      setCroppedImageUrl(croppedImageUrl);
-    }
-  }
-
-  function getCroppedImg(image: HTMLImageElement, crop: PixelCrop): string {
+  async function getCroppedImg(
+    image: HTMLImageElement,
+    crop: PixelCrop
+  ): Promise<Blob> {
     const canvas = document.createElement("canvas");
     const scaleX = image.naturalWidth / image.width;
     const scaleY = image.naturalHeight / image.height;
 
-    canvas.width = crop.width * scaleX;
-    canvas.height = crop.height * scaleY;
+    canvas.width = crop.width;
+    canvas.height = crop.height;
 
     const ctx = canvas.getContext("2d");
 
     if (ctx) {
-      ctx.imageSmoothingEnabled = false;
-
       ctx.drawImage(
         image,
         crop.x * scaleX,
@@ -83,20 +79,34 @@ export function ImageCropper({
         crop.height * scaleY,
         0,
         0,
-        crop.width * scaleX,
-        crop.height * scaleY
+        crop.width,
+        crop.height
       );
     }
 
-    return canvas.toDataURL("image/png", 1.0);
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Crop failed"));
+          }
+        },
+        "image/png",
+        1.0
+      );
+    });
   }
 
   async function onCrop() {
-    try {
-      setCroppedImage(croppedImageUrl);
+    if (imgRef.current && completedCrop) {
+      const croppedBlob = await getCroppedImg(imgRef.current, completedCrop);
+      setCroppedImageUrl(URL.createObjectURL(croppedBlob)); // Atualizar URL para a pré-visualização
+      onCropComplete(croppedBlob);
       setDialogOpen(false);
-    } catch (error) {
-      alert("Something went wrong!");
+    } else {
+      alert("Image crop failed. Please try again.");
     }
   }
 
@@ -105,8 +115,8 @@ export function ImageCropper({
       <DialogTrigger>
         <Avatar className="size-36 cursor-pointer ring-offset-2 ring-2 ring-slate-200">
           <AvatarImage
-            src={croppedImage ? croppedImage : selectedFile?.preview}
-            alt="@shadcn"
+            src={croppedImageUrl || selectedFile?.preview} // Usar a imagem cortada para pré-visualização
+            alt="Profile Image"
           />
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
@@ -117,40 +127,33 @@ export function ImageCropper({
             circularCrop
             crop={crop}
             onChange={(_, percentCrop) => setCrop(percentCrop)}
-            onComplete={(c) => onCropComplete(c)}
+            onComplete={(c) => setCompletedCrop(c)}
+            className="w-full h-full"
             aspect={aspect}
-            className="w-full h-80"
           >
-            <Avatar className="w-full h-80 rounded-none">
-              <AvatarImage
-                ref={imgRef}
-                className="rounded-none"
-                alt="Image Cropper Shell"
-                src={selectedFile?.preview}
-                onLoad={onImageLoad}
-              />
-              <AvatarFallback className="size-full min-h-[460px] rounded-none">
-                Loading...
-              </AvatarFallback>
-            </Avatar>
+            <img
+              ref={imgRef}
+              alt="Crop source"
+              src={selectedFile?.preview}
+              onLoad={onImageLoad}
+            />
           </ReactCrop>
         </div>
-        <DialogFooter className="p-6 pt-0 justify-center ">
+        <DialogFooter className="p-6 pt-0 justify-center">
           <DialogClose asChild>
             <Button
-              size={"sm"}
-              type="reset"
-              className="w-fit"
-              variant={"outline"}
+              size="sm"
+              variant="outline"
               onClick={() => {
                 setSelectedFile(null);
+                setCroppedImageUrl(""); // Limpar a URL da imagem cortada
               }}
             >
               <Trash2Icon className="mr-1.5 size-4" />
               Cancel
             </Button>
           </DialogClose>
-          <Button type="submit" size={"sm"} className="w-fit" onClick={onCrop}>
+          <Button type="button" size="sm" onClick={onCrop}>
             <CropIcon className="mr-1.5 size-4" />
             Crop
           </Button>
@@ -160,7 +163,6 @@ export function ImageCropper({
   );
 }
 
-// Helper function to center the crop
 export function centerAspectCrop(
   mediaWidth: number,
   mediaHeight: number,
