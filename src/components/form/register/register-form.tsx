@@ -103,7 +103,7 @@ export function RegisterForm() {
     <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
         {step === 0 && <StepOne onNext={nextStep} />}
-        {step === 1 && <StepTwo onNext={nextStep} onPrevious={previousStep} />}
+        {step === 1 && <StepTwo onPrevious={previousStep} />}
       </form>
     </FormProvider>
   );
