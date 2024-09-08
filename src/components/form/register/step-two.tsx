@@ -23,7 +23,7 @@ export function StepTwo({
   onNext: () => void;
   onPrevious: () => void;
 }) {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
 
   const [selectedFile, setSelectedFile] =
     React.useState<FileWithPreview | null>(null);
@@ -81,8 +81,9 @@ export function StepTwo({
                         selectedFile={selectedFile}
                         setSelectedFile={(file) => {
                           setSelectedFile(file);
-                          field.onChange(selectedFile);
+                          field.onChange(file);
                         }}
+                        onCropComplete={(blob) => setValue("profileImg", blob)} // Passando o blob cortado
                       />
                     ) : (
                       <Avatar

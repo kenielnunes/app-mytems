@@ -68,10 +68,10 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     async function authByMagicLink() {
-      if (query.magicAuthToken) {
+      if (query.magic_auth_token) {
         try {
           const auth = await authUserByMagicLink(
-            query.magicAuthToken as string
+            query.magic_auth_token as string
           );
 
           // Salva o JWT nos cookies
@@ -92,7 +92,19 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     }
 
     authByMagicLink();
-  }, [query.magicAuthToken]);
+
+    const { auth: token } = parseCookies();
+
+    async function recoverUserInfo() {
+      if (token) {
+        const user = await findUserByCredential();
+
+        setUser(user);
+      }
+    }
+
+    recoverUserInfo();
+  }, [query.magic_auth_token]);
 
   const login = (userData: User) => {
     setUser(userData);
