@@ -16,13 +16,7 @@ import { FileWithPath, useDropzone } from "react-dropzone";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SvgProfileImageText from "@/components/svg/svg-profile-image-text";
 
-export function StepTwo({
-  onNext,
-  onPrevious,
-}: {
-  onNext: () => void;
-  onPrevious: () => void;
-}) {
+export function StepTwo({ onPrevious }: { onPrevious: () => void }) {
   const { control, setValue } = useFormContext();
 
   const [selectedFile, setSelectedFile] =
