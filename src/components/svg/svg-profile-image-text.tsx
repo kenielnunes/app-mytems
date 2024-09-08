@@ -30,7 +30,7 @@ export default function SvgProfileImageText() {
           direction="ltr"
           dominantBaseline="alphabetic"
         >
-          Click on the profile
+          Clique para alterar a imagem
         </text>
       </g>
       <g strokeLinecap="round">

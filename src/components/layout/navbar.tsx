@@ -32,17 +32,23 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { parseCookies } from "nookies";
 import { SignInButton } from "../auth/sign-in-button";
+import { UserAvatar } from "../shared/user-avatar";
+import { useSession } from "@/contexts/use-session";
 
 export function SubNav() {
   const [isAuth, setIsAuth] = React.useState(false);
+  const { auth } = parseCookies();
 
   React.useEffect(() => {
-    const { auth } = parseCookies();
     setIsAuth(!!auth);
-  }, []);
+  }, [isAuth, auth]);
+
+  const { user } = useSession();
 
   const router = useRouter();
   const pathSegments = router.pathname.split("/").filter(Boolean);
+
+  console.log("user", user);
 
   return (
     <nav className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
@@ -121,13 +127,14 @@ export function SubNav() {
       {!!isAuth ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild className="cursor-pointer">
-            <Image
-              src="/placeholder-user.jpg"
-              width={40}
-              height={40}
-              alt="Avatar"
-              className="overflow-hidden rounded-full"
-            />
+            <div>
+              <UserAvatar
+                user={{
+                  name: user?.name ?? "Avatar",
+                  profileImageUrl: user?.profileImageUrl || "/placeholder.svg",
+                }}
+              />
+            </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>

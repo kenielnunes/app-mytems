@@ -4,15 +4,16 @@ import { any, z } from "zod";
 import { useState } from "react";
 
 import { Form } from "@/components/ui/form";
-import { createItem } from "@/services/api/modules/item/create-item";
+import { createAd } from "@/services/api/modules/item/create-ad";
 import { StepOne } from "./step-one";
 import { StepTwo } from "./step-two";
 import { StepThree } from "./step-three";
 import { toast } from "@/components/ui/use-toast";
 import { ToastAction } from "@/components/ui/toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 const formSchema = z.object({
-  itemName: z.string().min(2, {
+  name: z.string().min(2, {
     message: "O nome do item deve ter mais de 2 caracteres",
   }),
   description: z
@@ -29,11 +30,13 @@ const formSchema = z.object({
   files: z.any(),
 });
 
-export function CreateItemForm() {
+export function CreateAdForm() {
+  const queryClient = useQueryClient(); // Obtém o cliente de query
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      itemName: "",
+      name: "",
       description: "",
       basePrice: 0,
       gameId: "",
@@ -71,10 +74,10 @@ export function CreateItemForm() {
 
       formData.append("description", values.description);
       formData.append("basePrice", String(values.basePrice));
-      formData.append("name", values.itemName);
+      formData.append("name", values.name);
       formData.append("gameId", values.gameId);
 
-      const request = await createItem(formData);
+      const request = await createAd(formData);
 
       toast({
         variant: "default",
@@ -83,13 +86,17 @@ export function CreateItemForm() {
         action: <ToastAction altText="Show!">Ok</ToastAction>,
       });
 
+      // Invalida a query "items" para recarregar os itens
+      queryClient.invalidateQueries({
+        queryKey: ["items"],
+      });
+
       console.log(request);
     } catch (error: any) {
       toast({
         variant: "default",
         title: error.message,
-        description:
-          "Verifique a caixa de entrada do email informado e entre com  seu magic link ✨",
+        description: "Erro ao criar o Item",
       });
     }
   }

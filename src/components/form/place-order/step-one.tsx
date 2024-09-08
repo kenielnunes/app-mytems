@@ -44,7 +44,7 @@ export function StepOne({ onNext }: { onNext: () => void }) {
     <>
       <FormField
         control={control}
-        name="itemName"
+        name="name"
         render={({ field }) => (
           <FormItem>
             <FormLabel>Nome do Item</FormLabel>

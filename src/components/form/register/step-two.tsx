@@ -1,8 +1,6 @@
-// /src/components/CreateItemForm/StepTwo.tsx
-
 "use client";
 
-import { useFormContext, useFieldArray } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   FormField,
@@ -11,25 +9,12 @@ import {
   FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import React from "react";
-import Link from "next/link";
-import { CircleUser, Menu, Package2, Search } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { FileWithPreview, ImageCropper } from "@/components/ui/image-cropper";
 import { FileWithPath, useDropzone } from "react-dropzone";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SvgProfileImageText from "@/components/svg/svg-profile-image-text";
-import { RegisterForm } from "@/components/form/register/register-form";
 
 export function StepTwo({
   onNext,
@@ -38,7 +23,7 @@ export function StepTwo({
   onNext: () => void;
   onPrevious: () => void;
 }) {
-  const { control } = useFormContext();
+  const { control, setValue } = useFormContext();
 
   const [selectedFile, setSelectedFile] =
     React.useState<FileWithPreview | null>(null);
@@ -96,8 +81,9 @@ export function StepTwo({
                         selectedFile={selectedFile}
                         setSelectedFile={(file) => {
                           setSelectedFile(file);
-                          field.onChange(selectedFile);
+                          field.onChange(file);
                         }}
+                        onCropComplete={(blob) => setValue("profileImg", blob)} // Passando o blob cortado
                       />
                     ) : (
                       <Avatar

@@ -1,14 +1,22 @@
 import { authUserByMagicLink } from "@/services/api/modules/auth/auth-user-by-magic-link";
 import { findUserByCredential } from "@/services/api/modules/user/find-user-by-credential";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { destroyCookie, parseCookies, setCookie } from "nookies";
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
 
 // Definindo o tipo para o contexto do usuário
 interface UserContextType {
   user: User | undefined;
   login: (userData: User) => void;
   logout: () => void;
+  revalidateUser: () => void;
 }
 
 // Criando o contexto do usuário
@@ -18,32 +26,61 @@ const UserContext = createContext<UserContextType | undefined>(undefined);
 export const useSession = () => {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useUser deve ser usado dentro de um UserProvider");
+    throw new Error("useSession deve ser usado dentro de um SessionProvider");
   }
   return context;
 };
 
 // Componente provedor do contexto do usuário
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User>();
-
   const { query, replace, pathname } = useRouter();
+  const queryClient = useQueryClient();
+  const [user, setUser] = useState<User | undefined>(undefined);
 
-  React.useEffect(() => {
+  const revalidateUser = async () => {
+    const { auth: token } = parseCookies();
+    if (token) {
+      const updatedUser = await queryClient.fetchQuery<User>({
+        queryKey: ["user"],
+      });
+      setUser(updatedUser);
+    } else {
+      setUser(undefined);
+    }
+  };
+
+  const { data } = useQuery<User>({
+    queryKey: ["user"],
+    queryFn: async () => {
+      const { auth: token } = parseCookies();
+      if (token) {
+        const user = await findUserByCredential();
+        return user;
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (data) {
+      setUser(data);
+    }
+  }, [data]);
+
+  useEffect(() => {
     async function authByMagicLink() {
-      if (query.magicAuthToken) {
+      if (query.magic_auth_token) {
         try {
           const auth = await authUserByMagicLink(
-            query.magicAuthToken as string
+            query.magic_auth_token as string
           );
 
-          // salva o jwt nos cookies
+          // Salva o JWT nos cookies
           setCookie(undefined, "auth", auth.content.authToken);
 
-          // salva os dados do usuario no context
-          setUser(auth.content.user);
+          // Revalida os dados do usuário
+          await revalidateUser();
 
-          // limpa o token de autenticação da url
+          // Limpa o token de autenticação da URL
           replace({
             pathname,
             query: {},
@@ -67,19 +104,20 @@ export const SessionProvider = ({ children }: { children: ReactNode }) => {
     }
 
     recoverUserInfo();
-  }, [query.magicAuthToken]);
+  }, [query.magic_auth_token]);
 
   const login = (userData: User) => {
     setUser(userData);
+    revalidateUser();
   };
 
   const logout = () => {
-    setUser(undefined);
     destroyCookie(undefined, "auth");
+    setUser(undefined);
   };
 
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{ user, login, logout, revalidateUser }}>
       {children}
     </UserContext.Provider>
   );
