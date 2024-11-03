@@ -11,6 +11,8 @@ import { SessionProvider } from "@/contexts/use-session";
 import { Navbar } from "@/components/layout/main-nav";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useRouter } from "next/router";
+import { FriendshipPopover } from "@/components/friendship/friendship-popover";
+import { FriendsPresenceProvider } from "@/contexts/FriendsPresenceContext";
 
 const queryClient = new QueryClient();
 
@@ -23,22 +25,24 @@ export default function App({
   return (
     <QueryClientProvider client={queryClient}>
       <SessionProvider>
-        <TooltipProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
-            {pathname !== "/register" && <Navbar />}
-            <Separator />
-            <RootLayout>
-              <Component {...pageProps} />
-              <Toaster />
-              <Sonner />
-            </RootLayout>
-          </ThemeProvider>
-        </TooltipProvider>
+        <FriendsPresenceProvider>
+          <TooltipProvider>
+            <ThemeProvider
+              attribute="class"
+              defaultTheme="system"
+              enableSystem
+              disableTransitionOnChange
+            >
+              {pathname !== "/register" && <Navbar />}
+              <Separator />
+              <RootLayout>
+                <Component {...pageProps} />
+                <Toaster />
+                <Sonner />
+              </RootLayout>
+            </ThemeProvider>
+          </TooltipProvider>
+        </FriendsPresenceProvider>
       </SessionProvider>
     </QueryClientProvider>
   );

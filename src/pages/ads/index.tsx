@@ -41,6 +41,7 @@ import { useRouter } from "next/router";
 import { Suspense, useEffect } from "react";
 import { formatDistance } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { FriendshipPopover } from "@/components/friendship/friendship-popover";
 
 export default function Ads() {
   const { data, error } = useQuery<Item[]>({

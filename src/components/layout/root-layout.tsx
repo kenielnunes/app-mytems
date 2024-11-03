@@ -2,6 +2,7 @@ import { ReactNode } from "react";
 import { SubNav } from "./navbar";
 import { Poppins } from "next/font/google";
 import { useRouter } from "next/router";
+import { FriendshipPopover } from "../friendship/friendship-popover";
 
 type RootLayoutProps = {
   children: ReactNode;
@@ -18,6 +19,7 @@ export const RootLayout = ({ children }: RootLayoutProps) => {
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         {pathname !== "/register" && <SubNav />}
         {children}
+        <FriendshipPopover />
       </div>
     </div>
   );
