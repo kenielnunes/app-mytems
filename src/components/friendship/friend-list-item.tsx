@@ -10,6 +10,7 @@ interface FriendListItemProps {
   name: string;
   isOnline: boolean;
   lastMessage: string;
+  onSelect: () => void;
 }
 
 export function FriendListItem({
@@ -17,11 +18,15 @@ export function FriendListItem({
   name,
   isOnline,
   lastMessage,
+  onSelect,
 }: FriendListItemProps) {
   // Configurar presença
 
   return (
-    <div className="flex items-center space-x-4 p-2 hover:bg-black cursor-pointer rounded-md">
+    <div
+      onClick={onSelect}
+      className="flex items-center space-x-4 p-2 hover:bg-black cursor-pointer rounded-md"
+    >
       <Avatar className="w-10 h-10">
         <AvatarImage src={avatarUrl} alt={`${name}'s avatar`} />
         <AvatarFallback>{name.charAt(0)}</AvatarFallback>

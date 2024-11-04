@@ -1,5 +1,6 @@
 // context/FriendsPresenceContext.tsx
 
+import { FriendStatus } from "@/components/friendship/friendship-popover";
 import { supabase } from "@/lib/supabase-browser";
 import { api } from "@/services/api/api";
 import { findUserFriends } from "@/services/api/modules/friendship/find-user-friends";
@@ -18,10 +19,7 @@ import React, {
 
 interface FriendsPresenceContextType {
   friendsStatus: {
-    [key: string]: {
-      id: string;
-      is_online: boolean;
-    };
+    [key: string]: FriendStatus[];
   };
   friends?: Friend[];
 }
@@ -51,14 +49,13 @@ export const FriendsPresenceProvider = ({
     refetchInterval: 1000 * 60 * 5, // 5 minutos
   });
 
-  useEffect(() => {
-    const channel = supabase.channel("friends_presence");
+  const channel = supabase.channel("friends_presence");
+  console.log("channel", channel.presenceState());
 
+  useEffect(() => {
     channel
       .on("presence", { event: "sync" }, () => {
         const presenceState = channel.presenceState();
-
-        console.log("presenceState", presenceState);
 
         setFriendsStatus(presenceState);
       })

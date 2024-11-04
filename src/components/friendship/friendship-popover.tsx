@@ -9,7 +9,9 @@ import {
 import { Circle } from "lucide-react";
 import { FriendListItem } from "./friend-list-item";
 import { useFriendsPresence } from "@/contexts/FriendsPresenceContext";
-interface FriendStatus {
+import FriendChat from "./friend-chat";
+import { useState } from "react";
+export interface FriendStatus {
   id: string;
   is_online: boolean;
   online_at: string; // Se precisar dessa informação
@@ -17,6 +19,8 @@ interface FriendStatus {
 }
 export function FriendshipPopover() {
   const { friendsStatus, friends } = useFriendsPresence();
+
+  const [friendChat, setFriendChat] = useState();
 
   console.log("friendsStatus", friendsStatus);
   return (
@@ -43,14 +47,22 @@ export function FriendshipPopover() {
 
               console.log("isOnline", isOnline);
               return (
-                <FriendListItem
-                  key={index}
-                  friendId={friend.friend.id}
-                  avatarUrl={friend.friend.profileImageUrl}
-                  name={friend.friend.name}
-                  isOnline={isOnline}
-                  lastMessage={"friend.lastMessage"}
-                />
+                <Popover>
+                  <PopoverTrigger>
+                    <FriendListItem
+                      onSelect={() => setFriendChat(friend.friend)}
+                      key={index}
+                      friendId={friend.friend.id}
+                      avatarUrl={friend.friend.profileImageUrl}
+                      name={friend.friend.name}
+                      isOnline={isOnline}
+                      lastMessage={"friend.lastMessage"}
+                    />
+                  </PopoverTrigger>
+                  <PopoverContent side="left">
+                    {friendChat && <FriendChat friend={friendChat} />}
+                  </PopoverContent>
+                </Popover>
               );
             })}
           </div>
