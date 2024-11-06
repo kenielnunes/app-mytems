@@ -21,6 +21,7 @@ import { profileImgSchema } from "./schemas";
 import { useSession } from "@/contexts/use-session";
 import { toast } from "sonner";
 import { updateUserProfileImage } from "@/services/api/modules/user/update-user-profile-image";
+import { api } from "@/services/api/api";
 
 type FormValues = z.infer<typeof profileImgSchema>;
 

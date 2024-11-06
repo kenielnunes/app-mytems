@@ -14,19 +14,26 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useSession } from "./use-session";
+import { RealtimePresenceState } from "@supabase/supabase-js";
 
 // Definindo o tipo para o contexto de presença de amigos
 
 interface FriendsPresenceContextType {
-  friendsStatus: {
-    [key: string]: FriendStatus[];
-  };
+  friendsStatus: string[];
   friends?: Friend[];
 }
 
+type FriendsChannelPresence = {
+  id: string;
+  is_online: boolean;
+  online_at: string;
+  presence_ref: string;
+};
+
 const FriendsPresenceContext = createContext<FriendsPresenceContextType>({
   friends: [],
-  friendsStatus: {},
+  friendsStatus: [],
 });
 
 export const FriendsPresenceProvider = ({
@@ -34,8 +41,9 @@ export const FriendsPresenceProvider = ({
 }: {
   children: ReactNode;
 }) => {
-  const [friendsStatus, setFriendsStatus] = useState({});
+  const [friendsStatus, setFriendsStatus] = useState<string[]>([]);
   const { auth } = parseCookies();
+  const { user } = useSession();
 
   const { data: friends } = useQuery({
     queryKey: ["friends"],
@@ -50,33 +58,28 @@ export const FriendsPresenceProvider = ({
   });
 
   const channel = supabase.channel("friends_presence");
-  console.log("channel", channel.presenceState());
 
   useEffect(() => {
     channel
       .on("presence", { event: "sync" }, () => {
-        const presenceState = channel.presenceState();
+        const friendsIds = [];
 
-        setFriendsStatus(presenceState);
+        const channelPresence =
+          channel.presenceState() as RealtimePresenceState<FriendsChannelPresence>;
+
+        for (const id in channelPresence) {
+          // insere os usuarios sub no canal sem repetições
+          friendsIds.push(channelPresence[id][0].id);
+        }
+
+        setFriendsStatus([...new Set(friendsIds)]);
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
-          // Aqui você pode trackear a presença de múltiplos amigos
-          // Por exemplo, usando IDs de amigos de um array
-
-          console.log("friends", friends);
-          const friendsIds = friends?.map((friend) => friend.friend.id) ?? [];
-
-          console.log("friendsIds", friendsIds);
-          await Promise.all(
-            friendsIds?.map((id) =>
-              channel.track({
-                id,
-                online_at: new Date().toISOString(),
-                is_online: true,
-              })
-            )
-          );
+          await channel.track({
+            online_at: new Date().toISOString(),
+            id: user?.id,
+          });
         }
       });
 
@@ -87,7 +90,7 @@ export const FriendsPresenceProvider = ({
     return () => {
       channel.unsubscribe();
     };
-  }, [friends]);
+  }, [user]);
 
   return (
     <FriendsPresenceContext.Provider value={{ friendsStatus, friends }}>

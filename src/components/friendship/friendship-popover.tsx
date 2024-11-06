@@ -11,16 +11,25 @@ import { FriendListItem } from "./friend-list-item";
 import { useFriendsPresence } from "@/contexts/FriendsPresenceContext";
 import FriendChat from "./friend-chat";
 import { useState } from "react";
+
 export interface FriendStatus {
   id: string;
   is_online: boolean;
-  online_at: string; // Se precisar dessa informação
-  presence_ref: string; // Se precisar dessa informação
+  online_at: string;
+  presence_ref: string;
 }
+
+interface FriendChatProps {
+  id: string;
+  name: string;
+  avatar: string;
+  isOnline: boolean;
+}
+
 export function FriendshipPopover() {
   const { friendsStatus, friends } = useFriendsPresence();
 
-  const [friendChat, setFriendChat] = useState();
+  const [friendChat, setFriendChat] = useState<FriendChatProps>();
 
   console.log("friendsStatus", friendsStatus);
   return (
@@ -37,29 +46,34 @@ export function FriendshipPopover() {
         </PopoverTrigger>
         <PopoverContent className="w-80">
           <div className="space-y-2">
-            {friends?.map((friend, index) => {
-              const isOnline = Object.values(friendsStatus).some(
-                (subs: FriendStatus[]) =>
-                  subs.some(
-                    (status: FriendStatus) => status.id === friend.friend.id
-                  )
-              );
+            {friends?.map((friendship, index) => {
+              const isOnline = friendsStatus.includes(friendship.friend.id);
+
+              const { id, name, profileImageUrl } = friendship.friend;
 
               console.log("isOnline", isOnline);
+
               return (
                 <Popover>
                   <PopoverTrigger>
                     <FriendListItem
-                      onSelect={() => setFriendChat(friend.friend)}
+                      onSelect={() =>
+                        setFriendChat({
+                          id,
+                          avatar: profileImageUrl,
+                          name: name,
+                          isOnline,
+                        })
+                      }
                       key={index}
-                      friendId={friend.friend.id}
-                      avatarUrl={friend.friend.profileImageUrl}
-                      name={friend.friend.name}
+                      friendId={id}
+                      avatarUrl={profileImageUrl}
+                      name={name}
                       isOnline={isOnline}
                       lastMessage={"friend.lastMessage"}
                     />
                   </PopoverTrigger>
-                  <PopoverContent side="left">
+                  <PopoverContent className="w-[32.5rem]" side="left">
                     {friendChat && <FriendChat friend={friendChat} />}
                   </PopoverContent>
                 </Popover>
