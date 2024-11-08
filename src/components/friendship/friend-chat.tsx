@@ -15,6 +15,8 @@ import { Forward, Heart } from "lucide-react";
 import ChatBottombar from "../ui/chat/chat-bottombar";
 import { supabase } from "@/lib/supabase-browser";
 import { useSession } from "@/contexts/use-session";
+import { getOrCreateRoomChat } from "@/services/api/modules/chat/get-or-create-room-chat";
+import { getMessageHistory } from "@/services/api/modules/chat/get-message-history";
 
 interface FriendChatProps {
   friend: {
@@ -23,6 +25,13 @@ interface FriendChatProps {
     avatar: string;
     isOnline: boolean;
   };
+}
+
+interface Message {
+  id: string;
+  content: string;
+  sender_id: string;
+  sent_at: string;
 }
 
 const FriendChat = ({ friend }: FriendChatProps) => {
@@ -41,47 +50,63 @@ const FriendChat = ({ friend }: FriendChatProps) => {
 
   const { user } = useSession();
 
+  const [roomChatId, setRoomChatId] = useState<string | null>(null);
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [newMessage, setNewMessage] = useState<string>("");
+
   useEffect(() => {
-    // Join a room/topic. Can be unique for each friend.
-    const channel = supabase.channel(`room-1`);
+    async function fetchRoomAndMessages() {
+      // Criar ou buscar a sala de chat
+      const room = await getOrCreateRoomChat(user?.id!, friend.id);
+      setRoomChatId(room.id);
 
-    // Function to handle receiving a new message
-    const messageReceived = (payload) => {
-      const newMessage = {
-        sender: payload.payload.userId === user?.id ? "me" : "friend",
-        content: payload.payload.message,
-        timestamp: new Date().toLocaleTimeString(),
-      };
-      setChatHistory((prev) => [...prev, newMessage]);
-    };
+      // Carregar histórico de mensagens
+      const history = await getMessageHistory(room.id);
+      setMessages(history);
+    }
 
-    // Subscribe to the channel and listen for new messages
-    channel
-      .on("broadcast", { event: "new-message" }, messageReceived)
+    fetchRoomAndMessages();
+  }, [user?.id!, friend.id]);
+
+  useEffect(() => {
+    if (!roomChatId) return;
+
+    const messageSubscription = supabase
+      .channel("realtime-chat")
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "message",
+          filter: `room_chat_id=eq.${roomChatId}`,
+        },
+        (payload) => {
+          setMessages((messages) => [...messages, payload.new]);
+        }
+      )
       .subscribe();
 
-    const presence = channel.presenceState();
-
-    console.log("presence", presence);
-
     return () => {
-      channel.unsubscribe();
+      supabase.removeChannel(messageSubscription);
     };
-  }, []);
+  }, [roomChatId]);
 
-  // Function to send a message
-  const sendMessage = async (message: string) => {
-    if (!message.trim()) return;
+  async function handleSendMessage() {
+    if (newMessage.trim() === "" || !roomChatId) return;
 
-    // Send message to Supabase channel
-    await supabase.channel(`room-1`).send({
-      type: "broadcast",
-      event: "new-message",
-      payload: { message, userId: user?.id },
-    });
+    const { error } = await supabase
+      .from("message")
+      .insert([
+        { content: newMessage, sender_id: user?.id, room_chat_id: roomChatId },
+      ]);
 
-    setMessage(""); // Clear the input
-  };
+    if (error) {
+      console.error("Erro ao enviar mensagem:", error.message);
+    } else {
+      setNewMessage("");
+    }
+  }
 
   console.log("chatHistory", chatHistory);
 
@@ -136,10 +161,7 @@ const FriendChat = ({ friend }: FriendChatProps) => {
           })}
         </AnimatePresence>
       </ChatMessageList>
-      <ChatBottombar
-        isMobile={false}
-        handleSend={(message) => sendMessage(message)}
-      />
+      <ChatBottombar isMobile={false} handleSend={() => handleSendMessage()} />
     </div>
   );
 };
