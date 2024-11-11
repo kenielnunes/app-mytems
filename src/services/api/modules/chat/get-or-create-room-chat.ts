@@ -1,33 +1,40 @@
 // services/chatService.ts
-
-import { supabase } from "@/lib/supabase-browser";
-
 export async function getOrCreateRoomChat(userId: string, recipientId: string) {
   // Buscar uma sala de chat existente
-  let { data: existingRoom, error } = await supabase
-    .from("room_chat")
-    .select("*")
-    .or(`created_by_id.eq.${userId},joined_by_id.eq.${recipientId}`);
+  let response = await fetch(
+    `http://localhost:4000/room-chat?userId=${userId}&recipientId=${recipientId}`,
+    {
+      method: "GET",
+    }
+  );
 
-  if (error) {
-    throw new Error(`Erro ao buscar sala de chat: ${error.message}`);
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar sala de chat: ${response.statusText}`);
   }
 
-  if (existingRoom && existingRoom.length > 0) {
-    return existingRoom[0]; // Retorna a sala de chat existente
+  const existingRoom = await response.json();
+
+  if (existingRoom) {
+    return existingRoom; // Retorna a sala de chat existente
   }
 
-  // Criar nova sala de chat
-  const { data: newRoom, error: createError } = await supabase
-    .from("room_chat")
-    .insert([
-      { created_by_id: userId, joined_by_id: recipientId, name: "Chat" },
-    ])
-    .single();
+  // Caso não exista, cria uma nova sala de chat
+  const createResponse = await fetch(`/api/room-chat`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      createdById: userId,
+      recipientId,
+      name: "Chat",
+    }),
+  });
 
-  if (createError) {
-    throw new Error(`Erro ao criar sala de chat: ${createError.message}`);
+  if (!createResponse.ok) {
+    throw new Error(`Erro ao criar sala de chat: ${createResponse.statusText}`);
   }
 
+  const newRoom = await createResponse.json();
   return newRoom; // Retorna a nova sala de chat
 }

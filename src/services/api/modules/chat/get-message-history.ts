@@ -1,18 +1,18 @@
-import { supabase } from "@/lib/supabase-browser";
-
 // services/messageService.ts
 export async function getMessageHistory(roomChatId: string) {
-  const { data, error } = await supabase
-    .from("message")
-    .select("*")
-    .eq("room_chat_id", roomChatId)
-    .order("sent_at", { ascending: true });
+  const response = await fetch(
+    `http://localhost:4000/room-chat/${roomChatId}/messages`,
+    {
+      method: "GET",
+    }
+  );
 
-  if (error) {
+  if (!response.ok) {
     throw new Error(
-      `Erro ao carregar histórico de mensagens: ${error.message}`
+      `Erro ao carregar histórico de mensagens: ${response.statusText}`
     );
   }
 
-  return data;
+  const data = await response.json();
+  return data; // Retorna as mensagens
 }

@@ -17,6 +17,7 @@ import { supabase } from "@/lib/supabase-browser";
 import { useSession } from "@/contexts/use-session";
 import { getOrCreateRoomChat } from "@/services/api/modules/chat/get-or-create-room-chat";
 import { getMessageHistory } from "@/services/api/modules/chat/get-message-history";
+import { sendMessage } from "@/services/api/modules/chat/send-message";
 
 interface FriendChatProps {
   friend: {
@@ -58,6 +59,7 @@ const FriendChat = ({ friend }: FriendChatProps) => {
     async function fetchRoomAndMessages() {
       // Criar ou buscar a sala de chat
       const room = await getOrCreateRoomChat(user?.id!, friend.id);
+      console.log("room", room);
       setRoomChatId(room.id);
 
       // Carregar histórico de mensagens
@@ -161,7 +163,10 @@ const FriendChat = ({ friend }: FriendChatProps) => {
           })}
         </AnimatePresence>
       </ChatMessageList>
-      <ChatBottombar isMobile={false} handleSend={() => handleSendMessage()} />
+      <ChatBottombar
+        isMobile={false}
+        handleSend={(message) => sendMessage(message, roomChatId!, user?.id!)}
+      />
     </div>
   );
 };
