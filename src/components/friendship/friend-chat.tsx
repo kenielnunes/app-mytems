@@ -31,8 +31,8 @@ interface FriendChatProps {
 interface Message {
   id: string;
   content: string;
-  sender_id: string;
-  sent_at: string;
+  senderId: string;
+  sentAt: string;
 }
 
 const FriendChat = ({ friend }: FriendChatProps) => {
@@ -55,6 +55,8 @@ const FriendChat = ({ friend }: FriendChatProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState<string>("");
 
+  console.log("messages", messages);
+
   useEffect(() => {
     async function fetchRoomAndMessages() {
       // Criar ou buscar a sala de chat
@@ -70,45 +72,32 @@ const FriendChat = ({ friend }: FriendChatProps) => {
     fetchRoomAndMessages();
   }, [user?.id!, friend.id]);
 
-  useEffect(() => {
-    if (!roomChatId) return;
+  supabase
+    .channel("realtime-chat")
+    .on(
+      "postgres_changes",
+      {
+        event: "INSERT",
+        schema: "public",
+        table: "message",
+      },
+      (payload) => {
+        console.log("payload", payload);
+        setMessages((messages) => [...messages, payload.new as Message]);
+      }
+    )
+    .subscribe();
 
-    const messageSubscription = supabase
-      .channel("realtime-chat")
-      .on(
-        "postgres_changes",
-        {
-          event: "INSERT",
-          schema: "public",
-          table: "message",
-          filter: `room_chat_id=eq.${roomChatId}`,
-        },
-        (payload) => {
-          setMessages((messages) => [...messages, payload.new]);
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(messageSubscription);
-    };
-  }, [roomChatId]);
-
-  async function handleSendMessage() {
-    if (newMessage.trim() === "" || !roomChatId) return;
-
-    const { error } = await supabase
-      .from("message")
-      .insert([
-        { content: newMessage, sender_id: user?.id, room_chat_id: roomChatId },
-      ]);
-
-    if (error) {
-      console.error("Erro ao enviar mensagem:", error.message);
-    } else {
-      setNewMessage("");
-    }
+  async function handleSendMessage(message: string) {
+    await sendMessage(message, roomChatId!, user?.id!);
   }
+
+  useEffect(() => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop =
+        messagesContainerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   console.log("chatHistory", chatHistory);
 
@@ -116,8 +105,16 @@ const FriendChat = ({ friend }: FriendChatProps) => {
     <div className="flex flex-col h-full">
       <ChatMessageList ref={messagesContainerRef}>
         <AnimatePresence>
-          {chatHistory.map((chat, index) => {
-            const variant = chat.sender === "me" ? "sent" : "received";
+          {messages?.map((chat, index) => {
+            console.log("chat.senderId", chat.senderId);
+
+            console.log("user?.id", user?.id);
+            const variant = !chat?.senderId
+              ? "sent"
+              : chat?.senderId === user?.id
+              ? "sent"
+              : "received";
+
             return (
               <motion.div
                 key={index}
@@ -136,11 +133,11 @@ const FriendChat = ({ friend }: FriendChatProps) => {
                 className="flex flex-col gap-2 p-4"
               >
                 <ChatBubble variant={variant}>
-                  <ChatBubbleAvatar src={friend.avatar} />
+                  <ChatBubbleAvatar src={user?.profileImageUrl} />
                   <ChatBubbleMessage isLoading={false}>
                     {chat.content}
-                    {chat.timestamp && (
-                      <ChatBubbleTimestamp timestamp={chat.timestamp} />
+                    {chat.sentAt && (
+                      <ChatBubbleTimestamp timestamp={chat.sentAt} />
                     )}
                   </ChatBubbleMessage>
                   <ChatBubbleActionWrapper>
@@ -165,7 +162,7 @@ const FriendChat = ({ friend }: FriendChatProps) => {
       </ChatMessageList>
       <ChatBottombar
         isMobile={false}
-        handleSend={(message) => sendMessage(message, roomChatId!, user?.id!)}
+        handleSend={(message) => handleSendMessage(message)}
       />
     </div>
   );

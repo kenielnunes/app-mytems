@@ -1,4 +1,4 @@
-import axios from "axios";
+import { api } from "../../api";
 
 // Função para enviar mensagem
 export async function sendMessage(
@@ -8,7 +8,7 @@ export async function sendMessage(
 ): Promise<void> {
   try {
     // Chamada ao backend para salvar a mensagem
-    const response = await axios.post("/messages", {
+    const response = await api.post("/messages/send", {
       content,
       roomChatId,
       senderId,
